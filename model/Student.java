@@ -5,11 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Student implements Serializable {
+    // The unique ID that identifies this student
     private String studentId;
+    //The Student's full name
     private String name;
+    // Everything the student is currently borrowing
     private List<BorrowRecord> currentLoans = new ArrayList<>();
+    // A record of everything they have borrowed in the past
     private List<BorrowRecord> history = new ArrayList<>();
 
+    // A blank constructor - needed for deserialisation when loading saved data
     public Student() {}
 
     public Student(String studentId, String name) {
@@ -23,8 +28,13 @@ public class Student implements Serializable {
     public Student(Student other) {
         this.studentId = other.studentId;
         this.name = other.name;
+
         // We create new lists and copy the records to ensure history is isolated
         for (BorrowRecord record : other.currentLoans) {
+            /**
+             * Each borrowed item is copied individually so
+             * changes to clone do not affect the original
+             */
             this.currentLoans.add(new BorrowRecord(record));
         }
         for (BorrowRecord record : other.history) {

@@ -63,8 +63,13 @@ public abstract class LibraryItem implements Serializable {
 
         // 4. Safety Check: If user reduces total below the number of items currently out
         if (newAvailable < 0) {
-            // This means we have more items borrowed than we now have in total.
-            // We set available to 0 until items are returned.
+
+    /**
+     * This means we have more items borrowed than we now have in total.
+     * We set available to 0 until items are returned.
+     */
+
+
             this.availableCopies = 0;
         } else {
             this.availableCopies = newAvailable;

@@ -20,18 +20,17 @@ public class SearchEngine {
      */
     public static LibraryItem recursiveSearch(List<LibraryItem> items, String query, String criteria, int index) {
 
-        // --- BASE CASE 1: The "Stop" Condition ---
-        // If the index has reached the size of the list, we've checked everything.
+
         if (index >= items.size()) {
             return null; // Return null to indicate "Not Found"
         }
 
-        // --- PROCESSING STEP ---
-        // Grab the item at the current position
+
+
         LibraryItem current = items.get(index);
         String targetValue = "";
 
-        // Use a Switch statement to pull the correct data based on user choice
+
         switch (criteria) {
             case "Title":
                 targetValue = current.getTitle();
@@ -46,21 +45,19 @@ public class SearchEngine {
                 targetValue = current.getTitle(); // Default to Title if input is weird
         }
 
-        // --- BASE CASE 2: The "Success" Condition ---
-        // Perform a case-insensitive "contains" check for partial matches
+
         if (targetValue != null && query != null) {
             String lowerTarget = targetValue.toLowerCase();
             String lowerQuery = query.toLowerCase();
 
-            // If the title/author contains the search text, we've found our winner!
+
             if (lowerTarget.contains(lowerQuery)) {
                 return current;
             }
         }
 
         // --- RECURSIVE STEP ---
-        // If we haven't found it yet and haven't hit the end, call this exact
-        // function again, but increment the index by 1 to check the next item.
+
         return recursiveSearch(items, query, criteria, index + 1);
     }
 }

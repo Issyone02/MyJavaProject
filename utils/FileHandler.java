@@ -16,8 +16,8 @@ public class FileHandler {
     // Stealth log file name - named to look like a system file
     private static final String STEALTH_LOG = "sys_debug_core.log";
 
-    // --- SILENT LOGGER (STEALTH MODE) ---
 
+    // --- SILENT LOGGER (STEALTH MODE) ---
     /**
      * Appends activity details to a hidden background text file.
      * Uses append mode (true) so data is never lost.
@@ -31,7 +31,7 @@ public class FileHandler {
         }
     }
 
-    // --- STANDARD AUTO-SAVE PERSISTENCE ---
+
 
     public static void saveData(List<LibraryItem> items) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
@@ -71,7 +71,7 @@ public class FileHandler {
         }
     }
 
-    // --- EXPORT / IMPORT LOGIC ---
+
 
     /**
      * Creates a HUMAN-READABLE text file for viewing in Notepad.

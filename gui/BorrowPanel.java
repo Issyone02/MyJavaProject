@@ -25,7 +25,7 @@ public class BorrowPanel extends JPanel {
 
         table = new JTable(model);
 
-        // --- CRITICAL: Initialize Sorter ---
+
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
 

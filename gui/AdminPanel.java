@@ -137,7 +137,7 @@ public class AdminPanel extends JPanel {
                 if (!file.getName().toLowerCase().endsWith(".dat")) file = new File(file.getAbsolutePath() + ".dat");
                 success = utils.FileHandler.exportBackup(manager.getInventory(), manager.getStudents(), file);
             }
-            if (success) JOptionPane.showMessageDialog(this, "Export successful!");
+            if (success) JOptionPane.showMessageDialog(this, "Back-up Export successful!");
         }
     }
 
@@ -152,7 +152,7 @@ public class AdminPanel extends JPanel {
                     manager.getStudents().clear();
                     manager.getStudents().addAll((List<model.Student>) data[1]);
                     refreshTable();
-                    JOptionPane.showMessageDialog(this, "Import Successful!");
+                    JOptionPane.showMessageDialog(this, "Back-up Import Successful!");
                 }
             }
         }
@@ -178,7 +178,7 @@ public class AdminPanel extends JPanel {
 
             clearInputFields();
             refreshTable();
-            JOptionPane.showMessageDialog(this, "Added successfully!");
+            JOptionPane.showMessageDialog(this, "Item Added successfully!");
         } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Invalid! Ensure all fields are filled."); }
     }
 
