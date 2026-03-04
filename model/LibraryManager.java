@@ -18,7 +18,7 @@ public class LibraryManager implements Serializable {
     public LibraryManager() {
         saveState(false);
     }
-
+    
     private static class LibraryState implements Serializable {
         final List<LibraryItem> inv;
         final List<Student> std;
