@@ -11,12 +11,27 @@ public class Student implements Serializable {
     private List<BorrowRecord> history = new ArrayList<>();
 
     public Student() {}
+
     public Student(String studentId, String name) {
         this.studentId = studentId;
         this.name = name;
     }
 
-    // Logic updated to ensure BorrowRecords are created correctly
+    /**
+     * Copy Constructor for Deep Cloning (Crucial for Sequential Undo/Redo)
+     */
+    public Student(Student other) {
+        this.studentId = other.studentId;
+        this.name = other.name;
+        // We create new lists and copy the records to ensure history is isolated
+        for (BorrowRecord record : other.currentLoans) {
+            this.currentLoans.add(new BorrowRecord(record));
+        }
+        for (BorrowRecord record : other.history) {
+            this.history.add(new BorrowRecord(record));
+        }
+    }
+
     public void addBorrowedItem(LibraryItem item) {
         BorrowRecord record = new BorrowRecord(item);
         currentLoans.add(record);

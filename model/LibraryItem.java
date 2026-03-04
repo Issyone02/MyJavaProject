@@ -46,20 +46,29 @@ public abstract class LibraryItem implements Serializable {
 
     /**
      * Updates the total physical units.
-     * Logic: Maintains the existing "Borrowed" gap by applying the change to Available count.
+     * Logic: Captures items currently borrowed and ensures they remain borrowed
+     * after the total quantity is changed.
      */
     public void setTotalCopies(int n) {
-        // Calculate the change in stock
-        int difference = n - this.totalCopies;
+        // 1. Calculate how many items are currently with students (Borrowed)
+        // Example: Total 10, Available 7 -> Borrowed = 3
+        int currentBorrowed = this.totalCopies - this.availableCopies;
 
-        // Update total
+        // 2. Update the total to the new value (e.g., 15)
         this.totalCopies = n;
 
-        // Apply the same change to available copies (Synchronized Scaling)
-        int newAvailable = this.availableCopies + difference;
+        // 3. Calculate new available count
+        // New Total (15) - Still Borrowed (3) = New Available (12)
+        int newAvailable = n - currentBorrowed;
 
-        // Use the safety-checked setter to finalize the value
-        setAvailableCopies(newAvailable);
+        // 4. Safety Check: If user reduces total below the number of items currently out
+        if (newAvailable < 0) {
+            // This means we have more items borrowed than we now have in total.
+            // We set available to 0 until items are returned.
+            this.availableCopies = 0;
+        } else {
+            this.availableCopies = newAvailable;
+        }
     }
 
     /**

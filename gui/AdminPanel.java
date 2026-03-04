@@ -184,7 +184,10 @@ public class AdminPanel extends JPanel {
 
     private void handleEditItem() {
         int row = table.getSelectedRow();
-        if (row == -1) return;
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Please select an item to edit.");
+            return;
+        }
         int mRow = table.convertRowIndexToModel(row);
         String id = (String) model.getValueAt(mRow, 0);
 
@@ -193,15 +196,36 @@ public class AdminPanel extends JPanel {
         LibraryItem item = manager.getInventory().stream().filter(i -> i.getId().equals(id)).findFirst().orElse(null);
         if (item == null) return;
 
+        // Populate fields with current data
         JTextField tEdit = new JTextField(item.getTitle());
         JTextField qEdit = new JTextField(String.valueOf(item.getTotalCopies()));
         JComboBox<String> typeEdit = new JComboBox<>(new String[]{"Book", "Journal", "Magazine"});
         typeEdit.setSelectedItem(item.getType());
 
-        Object[] msg = {"Title:", tEdit, "Type:", typeEdit, "Quantity:", qEdit};
-        if (JOptionPane.showConfirmDialog(this, msg, "Edit", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            manager.updateItem(id, (String)typeEdit.getSelectedItem(), tEdit.getText(), item.getAuthor(), item.getYear(), Integer.parseInt(qEdit.getText()), "Updated");
-            refreshTable();
+        // Calculation check for the UI message
+        int currentlyBorrowed = item.getTotalCopies() - item.getAvailableCopies();
+        String borrowNote = currentlyBorrowed > 0 ? "\n(Note: " + currentlyBorrowed + " units are currently borrowed)" : "";
+
+        Object[] msg = {
+                "Edit Title:", tEdit,
+                "Edit Type:", typeEdit,
+                "New Total Quantity:" + borrowNote, qEdit
+        };
+
+        if (JOptionPane.showConfirmDialog(this, msg, "Edit Item: " + id, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            try {
+                int newTotal = Integer.parseInt(qEdit.getText().trim());
+                String newType = (String) typeEdit.getSelectedItem();
+                String newTitle = tEdit.getText().trim();
+
+                // Pass to the smart manager logic we implemented earlier
+                manager.updateItem(id, newType, newTitle, item.getAuthor(), item.getYear(), newTotal, "Admin Manual Edit");
+
+                refreshTable();
+                JOptionPane.showMessageDialog(this, "Item updated successfully!");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Invalid quantity. Please enter a number.");
+            }
         }
     }
 
@@ -228,7 +252,6 @@ public class AdminPanel extends JPanel {
         d.setLayout(new BorderLayout());
 
         String[] hCols = {"User", "Time", "Action", "Details"};
-        // Make Audit Table non-editable
         DefaultTableModel hMod = new DefaultTableModel(hCols, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
         };
@@ -243,7 +266,7 @@ public class AdminPanel extends JPanel {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 String action = (String) table.getValueAt(row, 2);
-                if ("STOCK_REDUCTION".equals(action) || "DELETE_ITEM".equals(action)) {
+                if ("STOCK_REDUCTION".equals(action) || "DELETE_ITEM".equals(action) || "STOCK_UPDATE".equals(action)) {
                     c.setForeground(Color.RED);
                     c.setFont(c.getFont().deriveFont(Font.BOLD));
                 } else {
@@ -255,7 +278,6 @@ public class AdminPanel extends JPanel {
 
         d.add(new JScrollPane(hTab), BorderLayout.CENTER);
 
-        // --- EXPORT TO FILE BUTTON ---
         JButton exportLogBtn = new JButton("📥 Export Audit History ");
         exportLogBtn.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();

@@ -12,3 +12,17 @@ ACTION | User: STAFF | Task: WAITLIST | Info: Folorunsho Joshua queued for ACM I
 ACTION | User: 30114413 | Task: STUDENT_DEL | Info: Deleted student ID: 30093831 | Time: 2026-03-04 02:28:00
 ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 02:28:02
 SESSION_END   | User: 30114413 | Time: 2026-03-04 02:31:08
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 02:44:48
+ACTION | User: SYSTEM | Task: STOCK_UPDATE | Info: ID: 90807 Reason: Updated | Time: 2026-03-04 02:47:35
+ACTION | User: SYSTEM | Task: STOCK_UPDATE | Info: ID: 6FB83 Reason: Updated | Time: 2026-03-04 05:04:50
+ACTION | User: STAFF | Task: RETURN | Info: Item: ACM Intoduction to Software Engineering returned by Mujeeb | Time: 2026-03-04 05:06:05
+SESSION_END   | User: 30114413 | Time: 2026-03-04 11:25:40
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 11:26:11
+ACTION | User: STAFF | Task: BORROW | Info: Student: Mujeeb borrowed ACM Intoduction to Software Engineering | Time: 2026-03-04 11:27:14
+ACTION | User: STAFF | Task: BORROW | Info: Student: Damilare Idowu borrowed ACM Intoduction to Software Engineering | Time: 2026-03-04 11:27:31
+ACTION | User: STAFF | Task: BORROW | Info: Student: LivingStone Joseph borrowed ACM Intoduction to Software Engineering | Time: 2026-03-04 11:27:45
+ACTION | User: STAFF | Task: WAITLIST | Info: Folorunsho Joshua queued for ACM Intoduction to Software Engineering | Time: 2026-03-04 11:28:08
+ACTION | User: SYSTEM | Task: STOCK_UPDATE | Info: ID: 6FB83 | Type: Book | New Total: 8 | Time: 2026-03-04 11:29:17
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 11:30:20
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 11:30:30
+SESSION_END   | User: 30114413 | Time: 2026-03-04 12:11:38

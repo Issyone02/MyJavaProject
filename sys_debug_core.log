@@ -14,3 +14,52 @@ ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 
 SESSION_END   | User: 30114413 | Time: 2026-03-04 02:31:08
 SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 02:44:48
 ACTION | User: SYSTEM | Task: STOCK_UPDATE | Info: ID: 90807 Reason: Updated | Time: 2026-03-04 02:47:35
+ACTION | User: SYSTEM | Task: STOCK_UPDATE | Info: ID: 6FB83 Reason: Updated | Time: 2026-03-04 05:04:50
+ACTION | User: STAFF | Task: RETURN | Info: Item: ACM Intoduction to Software Engineering returned by Mujeeb | Time: 2026-03-04 05:06:05
+SESSION_END   | User: 30114413 | Time: 2026-03-04 11:25:40
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 11:26:11
+ACTION | User: STAFF | Task: BORROW | Info: Student: Mujeeb borrowed ACM Intoduction to Software Engineering | Time: 2026-03-04 11:27:14
+ACTION | User: STAFF | Task: BORROW | Info: Student: Damilare Idowu borrowed ACM Intoduction to Software Engineering | Time: 2026-03-04 11:27:31
+ACTION | User: STAFF | Task: BORROW | Info: Student: LivingStone Joseph borrowed ACM Intoduction to Software Engineering | Time: 2026-03-04 11:27:45
+ACTION | User: STAFF | Task: WAITLIST | Info: Folorunsho Joshua queued for ACM Intoduction to Software Engineering | Time: 2026-03-04 11:28:08
+ACTION | User: SYSTEM | Task: STOCK_UPDATE | Info: ID: 6FB83 | Type: Book | New Total: 8 | Time: 2026-03-04 11:29:17
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 11:30:20
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 11:30:30
+SESSION_END   | User: 30114413 | Time: 2026-03-04 12:11:38
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 12:12:05
+ACTION | User: SYSTEM | Task: STOCK_UPDATE | Info: ID: 6FB83 | Type: Book | New Total: 3 | Time: 2026-03-04 12:13:04
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:13:24
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:13:28
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:13:39
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:13:40
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:29
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:15:30
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:33
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:15:35
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:42
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:43
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:15:44
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:15:45
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:53
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:53
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:15:54
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:15:55
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:56
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:56
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:15:57
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:15:57
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:15:58
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:16:07
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:16:09
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:16:10
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:16:12
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:16:13
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:16:16
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:16:16
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:16:17
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:16:20
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:16:22
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:16:23
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:16:25
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 12:16:26
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 12:16:28

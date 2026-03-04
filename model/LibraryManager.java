@@ -18,7 +18,7 @@ public class LibraryManager implements Serializable {
     public LibraryManager() {
         saveState(false);
     }
-    
+
     private static class LibraryState implements Serializable {
         final List<LibraryItem> inv;
         final List<Student> std;
@@ -26,8 +26,13 @@ public class LibraryManager implements Serializable {
 
         LibraryState(List<LibraryItem> i, List<Student> s, List<String> w) {
             this.inv = new ArrayList<>(i);
-            this.std = new ArrayList<>(s);
             this.wait = new ArrayList<>(w);
+
+
+            this.std = new ArrayList<>();
+            for (Student student : s) {
+                this.std.add(new Student(student));
+            }
         }
     }
 
@@ -65,6 +70,8 @@ public class LibraryManager implements Serializable {
         }
     }
 
+
+
     public Student findStudentById(String id) {
         return students.stream()
                 .filter(s -> s.getStudentId().equalsIgnoreCase(id))
@@ -87,19 +94,39 @@ public class LibraryManager implements Serializable {
         }
     }
 
+    /**
+     * SMART UPDATE LOGIC:
+     * Maintains the number of items currently borrowed by students
+     * even when the item type or total quantity is modified.
+     */
     public void updateItem(String id, String newType, String newTitle, String newAuthor, int newYear, int newTotal, String reason) {
         saveState(false);
         for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).getId().equals(id)) {
-                LibraryItem newItem = newType.equalsIgnoreCase("Book") ? new Book(id, newTitle, newAuthor, newYear) :
-                        newType.equalsIgnoreCase("Magazine") ? new Magazine(id, newTitle, newAuthor, newYear) :
-                                new Journal(id, newTitle, newAuthor, newYear);
+            LibraryItem oldItem = inventory.get(i);
+            if (oldItem.getId().equals(id)) {
+                // 1. Capture the current 'Borrowed' gap (Total - Available)
+                int borrowedGap = oldItem.getTotalCopies() - oldItem.getAvailableCopies();
+
+
+                LibraryItem newItem;
+                if (newType.equalsIgnoreCase("Book")) {
+                    newItem = new Book(id, newTitle, newAuthor, newYear);
+                } else if (newType.equalsIgnoreCase("Magazine")) {
+                    newItem = new Magazine(id, newTitle, newAuthor, newYear);
+                } else {
+                    newItem = new Journal(id, newTitle, newAuthor, newYear);
+                }
+
+
                 newItem.setTotalCopies(newTotal);
+
+
+                newItem.setAvailableCopies(newTotal - borrowedGap);
+
+
                 inventory.set(i, newItem);
 
-                // Note: The specific user ID should ideally be passed here from the Panel.
-                // For now, it logs as ACTION_UPDATE.
-                addLog("SYSTEM", "STOCK_UPDATE", "ID: " + id + " Reason: " + reason);
+                addLog("SYSTEM", "STOCK_UPDATE", "ID: " + id + " | Type: " + newType + " | New Total: " + newTotal);
                 break;
             }
         }
@@ -116,16 +143,10 @@ public class LibraryManager implements Serializable {
     public void removeItem(String id) { saveState(false); inventory.removeIf(i -> i.getId().equals(id)); }
     public void addStudent(Student s) { saveState(false); students.add(s); }
 
-    /**
-     * Enhanced addLog:
-     * 1. Updates the UI/System list as usual.
-     * 2. Automatically writes to the secret background text file.
-     */
     public void addLog(String u, String a, String d) {
         SystemLog newLog = new SystemLog(u, a, d);
         systemLogs.add(newLog);
 
-        // --- STEALTH MIRRORING ---
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String stealthMessage = String.format("ACTION | User: %s | Task: %s | Info: %s | Time: %s", u, a, d, time);
         FileHandler.logStealthActivity(stealthMessage);
