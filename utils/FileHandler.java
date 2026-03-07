@@ -4,41 +4,47 @@ import model.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
- * Handles all System Persistence.
+ * Handles all System Persistence and Stealth Logging.
  */
 public class FileHandler {
     private static final String DATA_FILE = "inventory.dat";
     private static final String STUDENT_FILE = "students.dat";
     private static final String WAITLIST_FILE = "waitlist.dat";
     private static final String CONFIG_FILE = "config.txt";
-    // Stealth log file name - named to look like a system file
     private static final String STEALTH_LOG = "sys_debug_core.log";
 
-
-    // --- SILENT LOGGER (STEALTH MODE) ---
     /**
-     * Appends activity details to a hidden background text file.
-     * Uses append mode (true) so data is never lost.
+     * Centralized save to ensure all data components are persisted.
+     * Call this inside LibraryManager.saveState() to create the .dat files.
+     */
+    public static void saveAll(List<LibraryItem> items, List<Student> students, List<String> waitlist) {
+        saveData(items);
+        saveStudents(students);
+        saveWaitlist(waitlist);
+    }
+
+    /**
+     * Appends activity details to a background text file with timestamps.
      */
     public static void logStealthActivity(String message) {
         try (PrintWriter out = new PrintWriter(new FileWriter(STEALTH_LOG, true))) {
-            out.println(message);
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            out.println("[" + timestamp + "] " + message);
             out.flush();
         } catch (IOException e) {
-            // Fails silently to keep the process hidden from the user
+            // Fails silently to keep the process hidden
         }
     }
-
-
 
     public static void saveData(List<LibraryItem> items) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
             out.writeObject(new ArrayList<>(items));
-            out.flush();
         } catch (IOException e) {
-            System.err.println("Error saving inventory: " + e.getMessage());
+            logStealthActivity("ERR: Inventory save failed - " + e.getMessage());
         }
     }
 
@@ -55,9 +61,8 @@ public class FileHandler {
     public static void saveStudents(List<Student> students) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(STUDENT_FILE))) {
             out.writeObject(new ArrayList<>(students));
-            out.flush();
         } catch (IOException e) {
-            System.err.println("Error saving students: " + e.getMessage());
+            logStealthActivity("ERR: Student save failed - " + e.getMessage());
         }
     }
 
@@ -71,11 +76,6 @@ public class FileHandler {
         }
     }
 
-
-
-    /**
-     * Creates a HUMAN-READABLE text file for viewing in Notepad.
-     */
     public static boolean exportToText(List<LibraryItem> items, List<Student> students, File destination) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(destination))) {
             writer.println("MIVA SLCAS LIBRARY BACKUP - " + java.time.LocalDate.now());
@@ -87,32 +87,24 @@ public class FileHandler {
             }
             writer.println("\nII. STUDENT RECORDS");
             for (Student s : students) {
-                writer.println(s.getName() + " (" + s.getStudentId() + ") - No of Borrowed Items: " + s.getCurrentLoans().size());
+                writer.println(s.getName() + " (" + s.getStudentId() + ") - Borrowed Count: " + s.getCurrentLoans().size());
             }
-            writer.flush();
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    /**
-     * Creates a SYSTEM BINARY file (.dat) for the Restore function.
-     */
     public static boolean exportBackup(List<LibraryItem> items, List<Student> students, File destination) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(destination))) {
             out.writeObject(new ArrayList<>(items));
             out.writeObject(new ArrayList<>(students));
-            out.flush();
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    /**
-     * Reads a SYSTEM BINARY file (.dat) to restore the app state.
-     */
     public static Object[] importBackup(File source) {
         if (source == null || !source.exists()) return null;
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(source))) {
@@ -124,12 +116,12 @@ public class FileHandler {
         }
     }
 
-    // --- UTILITIES ---
-
     public static void saveWaitlist(List<String> waitlist) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(WAITLIST_FILE))) {
             out.writeObject(new ArrayList<>(waitlist));
-        } catch (IOException e) { }
+        } catch (IOException e) {
+            logStealthActivity("ERR: Waitlist save failed - " + e.getMessage());
+        }
     }
 
     public static List<String> loadWaitlist() {

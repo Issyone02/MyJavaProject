@@ -10,8 +10,8 @@ public class StudentManagementDialog extends JDialog {
     private final DefaultTableModel model;
     private final JTable table;
 
-    public StudentManagementDialog(Frame parent, LibraryManager manager, Student selectedStudent) {
-        super(parent, "Student Records", true);
+    public StudentManagementDialog(Frame parent, LibraryManager manager) {
+        super(parent, "System Student Database", true);
         this.manager = manager;
 
         setSize(600, 500);
@@ -19,28 +19,29 @@ public class StudentManagementDialog extends JDialog {
         setLayout(new BorderLayout(10, 10));
 
         // --- TABLE ---
-        String[] cols = {"Student ID", "Name", "No of Borrowed Items"};
+        String[] cols = {"Student ID", "Full Name", "Active Loans"};
         model = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         table = new JTable(model);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         // --- INPUT PANEL ---
-        JPanel inputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel inputPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         JTextField idField = new JTextField();
         JTextField nameField = new JTextField();
 
-        inputPanel.add(new JLabel("Student ID:"));
+        inputPanel.add(new JLabel("ID:"));
         inputPanel.add(idField);
-        inputPanel.add(new JLabel("Student Name:"));
+        inputPanel.add(new JLabel("Full Name:"));
         inputPanel.add(nameField);
 
         // --- BUTTONS ---
-        JPanel btnPanel = new JPanel();
-        JButton addBtn = new JButton("Add to DB");
-        JButton delBtn = new JButton("Delete from DB");
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton addBtn = new JButton("Add Student");
+        JButton delBtn = new JButton("Remove Selected");
         JButton closeBtn = new JButton("Close");
 
         btnPanel.add(addBtn);
@@ -51,12 +52,16 @@ public class StudentManagementDialog extends JDialog {
         add(new JScrollPane(table), BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
 
-        // Action Listeners
+        // Listeners
         addBtn.addActionListener(e -> {
-            if (!idField.getText().isEmpty() && !nameField.getText().isEmpty()) {
-                manager.addStudent(new Student(idField.getText(), nameField.getText()));
+            String id = idField.getText().trim();
+            String name = nameField.getText().trim();
+            if (!id.isEmpty() && !name.isEmpty()) {
+                manager.addStudent(new Student(id, name));
                 refresh();
                 idField.setText(""); nameField.setText("");
+            } else {
+                JOptionPane.showMessageDialog(this, "Please fill all fields.");
             }
         });
 
@@ -64,8 +69,10 @@ public class StudentManagementDialog extends JDialog {
             int row = table.getSelectedRow();
             if (row != -1) {
                 String id = (String) model.getValueAt(row, 0);
-                manager.removeStudent(id);
-                refresh();
+                if (JOptionPane.showConfirmDialog(this, "Delete student " + id + "?", "Confirm", JOptionPane.YES_NO_OPTION) == 0) {
+                    manager.removeStudent(id);
+                    refresh();
+                }
             }
         });
 

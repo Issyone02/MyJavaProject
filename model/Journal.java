@@ -1,23 +1,20 @@
 package model;
-/**
- * Journal is a special type of LibraryItem, so it inherits all the
- * common fields and behaviours from the parent class
- */
-public class Journal extends LibraryItem {
-    /**
-     * Empty constructor required for deserialisation
-     * when loading saved data
-     */
-    public Journal() {}
+
+import java.io.Serializable;
+
+public class Journal extends LibraryItem implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    public Journal() {
+        super();
+    }
 
     public Journal(String id, String title, String author, int year) {
-        /**
-         * Pass all the details up to the parent class, as such
-         * there is no need to redefine them here
-         */
         super(id, title, author, year);
     }
-    // Tells the system this item is specifically a Journal
+
     @Override
-    public String getType() { return "Journal"; }
+    public String getType() {
+        return "Journal";
+    }
 }

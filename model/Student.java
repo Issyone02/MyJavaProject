@@ -5,16 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Student implements Serializable {
-    // The unique ID that identifies this student
+    private static final long serialVersionUID = 1L;
+
     private String studentId;
-    //The Student's full name
     private String name;
-    // Everything the student is currently borrowing
     private List<BorrowRecord> currentLoans = new ArrayList<>();
-    // A record of everything they have borrowed in the past
     private List<BorrowRecord> history = new ArrayList<>();
 
-    // A blank constructor - needed for deserialisation when loading saved data
     public Student() {}
 
     public Student(String studentId, String name) {
@@ -23,23 +20,42 @@ public class Student implements Serializable {
     }
 
     /**
-     * Copy Constructor for Deep Cloning (Crucial for Sequential Undo/Redo)
+     * Copy Constructor for Deep Cloning.
+     * Crucial for the Undo/Redo system to prevent state contamination.
      */
     public Student(Student other) {
+        if (other == null) return;
         this.studentId = other.studentId;
         this.name = other.name;
 
-        // We create new lists and copy the records to ensure history is isolated
+        // Deep copy of active loans
         for (BorrowRecord record : other.currentLoans) {
-            /**
-             * Each borrowed item is copied individually so
-             * changes to clone do not affect the original
-             */
             this.currentLoans.add(new BorrowRecord(record));
         }
+        // Deep copy of loan history
         for (BorrowRecord record : other.history) {
             this.history.add(new BorrowRecord(record));
         }
+    }
+
+    /**
+     * NEW: Determines student status in real-time.
+     * Checks if the student is currently borrowing items or is on a waitlist.
+     */
+    public String calculateStatus(List<String> systemWaitlist) {
+        if (!currentLoans.isEmpty()) {
+            return "Active (" + currentLoans.size() + " items)";
+        }
+
+        // Check if student ID exists in any waitlist entry string
+        String searchTag = "(" + this.studentId + ")";
+        for (String entry : systemWaitlist) {
+            if (entry.contains(searchTag)) {
+                return "Waiting in Queue";
+            }
+        }
+
+        return "Inactive";
     }
 
     public void addBorrowedItem(LibraryItem item) {
@@ -47,6 +63,7 @@ public class Student implements Serializable {
         currentLoans.add(record);
     }
 
+    // Standard Getters and Setters
     public String getStudentId() { return studentId; }
     public void setStudentId(String studentId) { this.studentId = studentId; }
     public String getName() { return name; }

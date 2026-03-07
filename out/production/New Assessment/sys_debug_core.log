@@ -66,3 +66,551 @@ ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 
 SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 12:19:03
 SESSION_END   | User: 30114413 | Time: 2026-03-04 12:21:53
 SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 12:22:23
+ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Mujeeb Adebayo (30093831) | Time: 2026-03-04 19:02:47
+ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Damilare Idowu (30093832) | Time: 2026-03-04 19:03:12
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 19:03:15
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 19:03:18
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 19:03:27
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 19:03:28
+ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Damilare Idowu (30093832) | Time: 2026-03-04 19:04:11
+ACTION | User: STAFF | Task: BORROW | Info: Student: Mujeeb Adebayo borrowed Pragmatic Programmers | Time: 2026-03-04 19:07:43
+ACTION | User: STAFF | Task: BORROW | Info: Student: Damilare Idowu borrowed Pragmatic Programmers | Time: 2026-03-04 19:08:33
+ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Livingstone (30093833) | Time: 2026-03-04 19:09:39
+ACTION | User: STAFF | Task: BORROW | Info: Student: Livingstone borrowed Pragmatic Programmers | Time: 2026-03-04 19:10:05
+ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Folorunsho (30093834) | Time: 2026-03-04 19:10:47
+ACTION | User: STAFF | Task: WAITLIST | Info: Folorunsho queued for Pragmatic Programmers | Time: 2026-03-04 19:11:06
+SESSION_END   | User: 30114413 | Time: 2026-03-04 19:21:50
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 19:40:42
+ACTION | User: STUDENT | Task: WAITLIST | Info: Folorunsho queued for Pragmatic Programmers | Time: 2026-03-04 19:41:54
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 20:47:10
+ACTION | User: 30114413 | Task: WAITLIST | Info: Folorunsho queued for Pragmatic Programmers | Time: 2026-03-04 20:50:40
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 20:52:59
+ACTION | User: 30114413 | Task: WAITLIST | Info: Folorunsho queued for Pragmatic Programmers | Time: 2026-03-04 20:54:03
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 20:56:50
+ACTION | User: 30114413 | Task: BORROW | Info: Student: Folorunsho borrowed Technological Review | Time: 2026-03-04 20:57:30
+ACTION | User: 30114413 | Task: BORROW | Info: Student: Mujeeb Adebayo borrowed Clean Code | Time: 2026-03-04 20:58:01
+ACTION | User: 30114413 | Task: BORROW | Info: Student: Damilare Idowu borrowed Clean Code | Time: 2026-03-04 20:58:12
+ACTION | User: 30114413 | Task: BORROW | Info: Student: Livingstone borrowed Clean Code | Time: 2026-03-04 20:58:25
+ACTION | User: 30114413 | Task: BORROW | Info: Student: Folorunsho borrowed Clean Code | Time: 2026-03-04 20:58:35
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 20:59:15
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 20:59:17
+ACTION | User: 30114413 | Task: BORROW | Info: Student: Folorunsho borrowed Technological Review | Time: 2026-03-04 20:59:50
+SESSION_END   | User: 30114413 | Time: 2026-03-04 22:12:26
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 22:12:44
+SESSION_END   | User: 30114413 | Time: 2026-03-04 22:13:01
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 22:13:46
+ACTION | User: 30114413 | Task: RETURN | Info: Item: Clean Code returned by Mujeeb Adebayo | Time: 2026-03-04 22:19:04
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 22:19:50
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 22:19:54
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 22:20:02
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 22:20:03
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 22:20:31
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 22:20:40
+ACTION | User: 30114413 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 22:20:43
+ACTION | User: 30114413 | Task: REDO | Info: State restored. | Time: 2026-03-04 22:20:46
+SESSION_END   | User: 30114413 | Time: 2026-03-04 22:23:09
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 22:28:02
+ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: 6FB83 | Book | New Total: 6 | Time: 2026-03-04 22:31:48
+SESSION_END   | User: 30114413 | Time: 2026-03-04 22:35:38
+SESSION_START | User: 30163916 | Role: STAFF | Time: 2026-03-04 22:36:06
+ACTION | User: 30163916 | Task: WAITLIST | Info: Folorunsho queued for Pragmatic Programmers | Time: 2026-03-04 22:47:21
+ACTION | User: 30163916 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 22:50:03
+ACTION | User: 30163916 | Task: UNDO | Info: State reverted. | Time: 2026-03-04 22:50:06
+ACTION | User: 30163916 | Task: REDO | Info: State restored. | Time: 2026-03-04 22:50:09
+ACTION | User: 30163916 | Task: REDO | Info: State restored. | Time: 2026-03-04 22:50:10
+ACTION | User: 30163916 | Task: RETURN | Info: Item: Pragmatic Programmers returned by Mujeeb Adebayo | Time: 2026-03-04 22:50:40
+SESSION_END   | User: 30163916 | Time: 2026-03-04 23:23:45
+SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 23:24:01
+[2026-03-05 04:38:07] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 04:42:20] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: ade | Time: 2026-03-05 04:42:20
+[2026-03-05 04:43:26] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Mujeeb (ID: 30093831) | Time: 2026-03-05 04:43:26
+[2026-03-05 04:43:43] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Damilare (ID: 30093832) | Time: 2026-03-05 04:43:43
+[2026-03-05 04:44:07] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Livingstone (ID: 30093833) | Time: 2026-03-05 04:44:07
+[2026-03-05 04:44:28] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Folorunsho Davies (ID: 30093834) | Time: 2026-03-05 04:44:28
+[2026-03-05 04:45:53] ACTION | User: 30114413 | Task: BORROW | Info: Mujeeb borrowed ade | Time: 2026-03-05 04:45:53
+[2026-03-05 04:46:09] ACTION | User: 30114413 | Task: BORROW | Info: Damilare borrowed ade | Time: 2026-03-05 04:46:09
+[2026-03-05 04:46:35] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Livingstone added for ade | Time: 2026-03-05 04:46:35
+[2026-03-05 04:47:45] ACTION | User: 30114413 | Task: RETURN | Info: ade returned by Mujeeb | Time: 2026-03-05 04:47:45
+[2026-03-05 04:47:59] ACTION | User: 30114413 | Task: WAITLIST_FULFILLED | Info: Item assigned to Livingstone | Time: 2026-03-05 04:47:59
+[2026-03-05 04:48:56] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Mujeeb added for ade | Time: 2026-03-05 04:48:56
+[2026-03-05 04:49:28] ACTION | User: 30114413 | Task: RETURN | Info: ade returned by Damilare | Time: 2026-03-05 04:49:28
+[2026-03-05 04:49:39] ACTION | User: 30114413 | Task: WAITLIST_FULFILLED | Info: Item assigned to Mujeeb | Time: 2026-03-05 04:49:39
+[2026-03-05 04:49:54] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:49:54
+[2026-03-05 04:49:56] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:49:56
+[2026-03-05 04:49:59] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:49:59
+[2026-03-05 04:50:00] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:00
+[2026-03-05 04:50:00] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:00
+[2026-03-05 04:50:01] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:01
+[2026-03-05 04:50:02] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:02
+[2026-03-05 04:50:04] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:04
+[2026-03-05 04:50:04] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:04
+[2026-03-05 04:50:05] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:05
+[2026-03-05 04:50:05] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:05
+[2026-03-05 04:50:06] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:06
+[2026-03-05 04:50:09] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:09
+[2026-03-05 04:50:11] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:11
+[2026-03-05 04:50:12] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:12
+[2026-03-05 04:50:13] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:13
+[2026-03-05 04:50:14] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:14
+[2026-03-05 04:50:15] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:15
+[2026-03-05 04:50:16] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:16
+[2026-03-05 04:50:17] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:17
+[2026-03-05 04:50:18] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:18
+[2026-03-05 04:50:18] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:18
+[2026-03-05 04:50:20] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 04:50:20
+[2026-03-05 04:50:22] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:22
+[2026-03-05 04:50:23] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:23
+[2026-03-05 04:50:26] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 04:50:26
+[2026-03-05 04:50:45] ACTION | User: 30114413 | Task: RETURN | Info: ade returned by Livingstone | Time: 2026-03-05 04:50:45
+[2026-03-05 11:24:40] SESSION_END | User: System Owner
+[2026-03-05 11:25:16] FAILED LOGIN ATTEMPT: ID 30093831
+[2026-03-05 11:26:20] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 11:28:46] SESSION_END | User: System Owner
+[2026-03-05 11:29:02] SESSION_START | User: Mujeeb | ID: 30093831
+[2026-03-05 12:40:31] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 12:43:48] ACTION | User: 30114413 | Task: USER_CREATED | Info: Added user: Mujeeb Role: Admin | Time: 2026-03-05 12:43:48
+[2026-03-05 12:44:24] SESSION_END | User: System Owner
+[2026-03-05 12:44:41] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-05 13:28:45] ACTION | User: 102 | Task: BORROW | Info: Mujeeb borrowed ade | Time: 2026-03-05 13:28:45
+[2026-03-05 13:29:58] ACTION | User: 102 | Task: WAITLIST_ADD | Info: Folorunsho Davies added for ade | Time: 2026-03-05 13:29:58
+[2026-03-05 13:32:40] ACTION | User: 102 | Task: ADD_ITEM | Info: Added Magazine: Spectrum | Time: 2026-03-05 13:32:40
+[2026-03-05 13:39:03] ACTION | User: 102 | Task: RETURN | Info: ade returned by Mujeeb | Time: 2026-03-05 13:39:03
+[2026-03-05 13:39:27] ACTION | User: 102 | Task: WAITLIST_CLEAR | Info: All waitlist entries were cleared. | Time: 2026-03-05 13:39:27
+[2026-03-05 14:17:27] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 14:24:31] ACTION | User: 30114413 | Task: BORROW | Info: Mujeeb borrowed ade | Time: 2026-03-05 14:24:31
+[2026-03-05 14:24:47] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Damilare added for ade | Time: 2026-03-05 14:24:47
+[2026-03-05 14:28:08] ACTION | User: 30114413 | Task: USER_CREATED | Info: Added user: Mujeeb | Time: 2026-03-05 14:28:08
+[2026-03-05 14:44:46] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 14:45:49] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: 4470C | Type: Book | Qty: 2 | Time: 2026-03-05 14:45:49
+[2026-03-05 14:46:04] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: 4470C | Type: Book | Qty: 2 | Time: 2026-03-05 14:46:04
+[2026-03-05 14:56:07] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 15:08:58] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 15:09:19] ACTION | User: 30114413 | Task: WAITLIST_CLEAR | Info: All waitlist entries were cleared. | Time: 2026-03-05 15:09:19
+[2026-03-05 15:10:19] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: 4470C | Type: Book | Qty: 4 | Time: 2026-03-05 15:10:19
+[2026-03-05 15:11:17] ACTION | User: 30114413 | Task: BORROW | Info: Mujeeb borrowed ade | Time: 2026-03-05 15:11:17
+[2026-03-05 15:11:33] ACTION | User: 30114413 | Task: RETURN | Info: ade returned by Mujeeb | Time: 2026-03-05 15:11:33
+[2026-03-05 15:21:50] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 15:50:40] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: 4470C | Type: Book | Qty: 600 | Time: 2026-03-05 15:50:40
+[2026-03-05 15:51:41] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: 4470C | Type: Book | Qty: 600 | Time: 2026-03-05 15:51:41
+[2026-03-05 15:52:33] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 15:52:33
+[2026-03-05 15:52:44] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 15:52:44
+[2026-03-05 15:52:52] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 15:52:52
+[2026-03-05 15:52:54] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 15:52:54
+[2026-03-05 15:54:30] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 15:54:30
+[2026-03-05 15:54:31] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 15:54:31
+[2026-03-05 15:54:32] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 15:54:32
+[2026-03-05 15:54:33] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 15:54:33
+[2026-03-05 15:54:35] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 15:54:35
+[2026-03-05 15:54:35] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-05 15:54:35
+[2026-03-05 15:54:37] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 15:54:37
+[2026-03-05 15:54:38] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-05 15:54:38
+[2026-03-05 16:28:16] SESSION_END | User: System Owner
+[2026-03-05 16:29:10] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 16:37:59] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: Clean Code | Time: 2026-03-05 16:37:59
+[2026-03-05 16:41:21] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: The Pragmatic Programmer | Time: 2026-03-05 16:41:21
+[2026-03-05 16:42:20] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: Code Complete | Time: 2026-03-05 16:42:20
+[2026-03-05 16:43:45] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: Design Patterns | Time: 2026-03-05 16:43:45
+[2026-03-05 16:45:15] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: Refactoring | Time: 2026-03-05 16:45:15
+[2026-03-05 16:46:12] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: Software Engineering: A pactitioner's Approach | Time: 2026-03-05 16:46:12
+[2026-03-05 16:47:21] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: Patterns of Enterprise Application Architecture | Time: 2026-03-05 16:47:21
+[2026-03-05 16:47:59] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: Domain - Driven Design | Time: 2026-03-05 16:47:59
+[2026-03-05 16:48:55] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: Continuous Delivery | Time: 2026-03-05 16:48:55
+[2026-03-05 16:49:26] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: IEEE Transactions on Software Engineering | Time: 2026-03-05 16:49:26
+[2026-03-05 16:50:24] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: 4D9CD | Type: Journal | Qty: 205 | Time: 2026-03-05 16:50:24
+[2026-03-05 16:51:30] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Journal: IEEE Transactions on Software Engineering And Methodology | Time: 2026-03-05 16:51:30
+[2026-03-05 16:52:00] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Journal: Empirical Software Engineering | Time: 2026-03-05 16:52:00
+[2026-03-05 16:53:03] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Journal: Journal of Systems and Software | Time: 2026-03-05 16:53:03
+[2026-03-05 16:53:31] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Journal: Software: Practice and Experience | Time: 2026-03-05 16:53:31
+[2026-03-05 16:53:58] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Journal: Information and Software Technology | Time: 2026-03-05 16:53:58
+[2026-03-05 16:54:36] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Magazine: 5D Times | Time: 2026-03-05 16:54:36
+[2026-03-05 16:55:10] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Magazine: Dr. Dobb’s Journal | Time: 2026-03-05 16:55:10
+[2026-03-05 16:55:36] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Magazine: Software Development Magazine | Time: 2026-03-05 16:55:36
+[2026-03-05 16:56:03] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Magazine: Communications of the ACM | Time: 2026-03-05 16:56:03
+[2026-03-05 17:11:59] ACTION | User: 30114413 | Task: USER_CREATED | Info: Added user: Issylife Role: Admin | Time: 2026-03-05 17:11:59
+[2026-03-05 17:39:53] SESSION_END | User: System Owner
+[2026-03-05 17:41:14] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 17:43:57] ACTION | User: 30114413 | Task: BORROW | Info: Mujeeb borrowed Software Development Magazine | Time: 2026-03-05 17:43:57
+[2026-03-05 17:44:15] ACTION | User: 30114413 | Task: BORROW | Info: Damilare borrowed Software Development Magazine | Time: 2026-03-05 17:44:15
+[2026-03-05 17:44:24] ACTION | User: 30114413 | Task: BORROW | Info: Livingstone borrowed Software Development Magazine | Time: 2026-03-05 17:44:24
+[2026-03-05 17:44:40] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Folorunsho Davies added for Software Development Magazine | Time: 2026-03-05 17:44:40
+[2026-03-05 17:44:54] ACTION | User: 30114413 | Task: WAITLIST_CLEAR | Info: All waitlist entries were cleared. | Time: 2026-03-05 17:44:54
+[2026-03-05 17:45:21] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Folorunsho Davies added for Software Development Magazine | Time: 2026-03-05 17:45:21
+[2026-03-05 17:45:38] ACTION | User: 30114413 | Task: WAITLIST_CLEAR | Info: All waitlist entries were cleared. | Time: 2026-03-05 17:45:38
+[2026-03-05 18:45:17] SESSION_END | User: System Owner
+[2026-03-05 18:48:54] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 19:03:35] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 19:43:01] SESSION_END | User: System Owner
+[2026-03-05 20:28:23] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 21:30:27] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 21:46:48] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 21:57:34] ACTION | User: 30114413 | Task: USER_CREATED | Info: Added user: ccvbgf Role: Librarian | Time: 2026-03-05 21:57:34
+[2026-03-05 22:01:09] SESSION_END | User: System Owner
+[2026-03-05 22:01:23] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 22:01:54] SESSION_END | User: System Owner
+[2026-03-05 22:04:26] FAILED LOGIN ATTEMPT: ID 30114413
+[2026-03-05 22:04:42] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 22:06:34] SESSION_END | User: System Owner
+[2026-03-05 22:20:14] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 22:22:04] SESSION_END | User: System Owner
+[2026-03-05 22:32:58] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 22:40:13] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 22:42:04] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: D55BF | Type: Magazine | Qty: 4 | Time: 2026-03-05 22:42:04
+[2026-03-05 22:58:02] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 23:05:38] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 23:06:41] ACTION | User: 30114413 | Task: UPDATE_USER | Info: Target User: Mujeeb (Masked ID) | Time: 2026-03-05 23:06:41
+[2026-03-05 23:06:41] UPDATE_USER by 30114413 on ID 102
+[2026-03-05 23:08:45] ACTION | User: 30114413 | Task: BORROW | Info: Folorunsho Davies borrowed Software Development Magazine | Time: 2026-03-05 23:08:45
+[2026-03-05 23:13:19] SESSION_END | User: System Owner
+[2026-03-05 23:13:56] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 23:15:24] SESSION_END | User: System Owner
+[2026-03-05 23:16:02] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-05 23:18:16] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 23:18:37] SESSION_END | User: System Owner
+[2026-03-05 23:18:45] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-05 23:24:10] SESSION_END | User: Mujeeb
+[2026-03-05 23:24:25] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 23:25:30] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 23:37:02] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-05 23:37:18] SESSION_END | User: System Owner
+[2026-03-05 23:37:26] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-05 23:51:37] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-05 23:54:49] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-05 23:57:10] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-06 00:50:58] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 00:52:16] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Solomon Adeleke (ID: 30093835) | Time: 2026-03-06 00:52:16
+[2026-03-06 00:52:55] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Solomon Adeleke added for Software Development Magazine | Time: 2026-03-06 00:52:55
+[2026-03-06 00:53:10] ACTION | User: 30114413 | Task: WAITLIST_REMOVE | Info: Manual removal from queue | Time: 2026-03-06 00:53:10
+[2026-03-06 01:04:46] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 01:05:22] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Solomon Adeleke (ID: 30093835) | Time: 2026-03-06 01:05:22
+[2026-03-06 01:05:42] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Solomon Adeleke added for Software Development Magazine | Time: 2026-03-06 01:05:42
+[2026-03-06 01:06:10] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Rimisola Adewunmi (ID: 30093836) | Time: 2026-03-06 01:06:10
+[2026-03-06 01:11:54] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 01:12:20] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Adeleke Solomon (ID: 30093835) | Time: 2026-03-06 01:12:20
+[2026-03-06 01:12:47] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Rimisola Adewunmi (ID: 3009383) | Time: 2026-03-06 01:12:47
+[2026-03-06 01:13:20] ACTION | User: 30114413 | Task: STUDENT_DEL | Info: Deleted student: Rimisola Adewunmi (ID: 3009383) | Time: 2026-03-06 01:13:20
+[2026-03-06 01:13:42] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Rimisola Adewunmi (ID: 30093835) | Time: 2026-03-06 01:13:42
+[2026-03-06 01:13:57] ACTION | User: 30114413 | Task: STUDENT_DEL | Info: Deleted student: Rimisola Adewunmi (ID: 30093835) | Time: 2026-03-06 01:13:57
+[2026-03-06 01:14:05] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:14:05
+[2026-03-06 01:14:27] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Rimisola Adewunmi (ID: 30093836) | Time: 2026-03-06 01:14:27
+[2026-03-06 01:14:40] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Adeleke Solomon added for Software Development Magazine | Time: 2026-03-06 01:14:40
+[2026-03-06 01:14:50] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola Adewunmi added for Software Development Magazine | Time: 2026-03-06 01:14:50
+[2026-03-06 01:15:13] ACTION | User: 30114413 | Task: WAITLIST_REMOVE | Info: Manual removal from queue | Time: 2026-03-06 01:15:13
+[2026-03-06 01:16:04] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:16:04
+[2026-03-06 01:16:05] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:16:05
+[2026-03-06 01:16:06] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:16:06
+[2026-03-06 01:16:06] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:16:06
+[2026-03-06 01:16:07] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:16:07
+[2026-03-06 01:16:09] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:16:09
+[2026-03-06 01:16:09] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:16:09
+[2026-03-06 01:16:10] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:16:10
+[2026-03-06 01:16:11] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:16:11
+[2026-03-06 01:16:23] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:16:23
+[2026-03-06 01:16:24] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:16:24
+[2026-03-06 01:16:25] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:16:25
+[2026-03-06 01:20:47] SESSION_END | User: System Owner
+[2026-03-06 01:21:11] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 01:21:37] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Adeleke Solomon added for Software Development Magazine | Time: 2026-03-06 01:21:37
+[2026-03-06 01:21:47] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola Adewunmi added for Software Development Magazine | Time: 2026-03-06 01:21:47
+[2026-03-06 01:28:40] SESSION_END | User: System Owner
+[2026-03-06 01:29:03] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 01:29:58] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Adeleke Solomon added for Software Development Magazine | Time: 2026-03-06 01:29:58
+[2026-03-06 01:30:07] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola Adewunmi added for Software Development Magazine | Time: 2026-03-06 01:30:07
+[2026-03-06 01:31:01] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:31:01
+[2026-03-06 01:31:03] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:31:03
+[2026-03-06 01:31:07] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:31:07
+[2026-03-06 01:31:08] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:31:08
+[2026-03-06 01:31:09] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:31:09
+[2026-03-06 01:31:10] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:31:10
+[2026-03-06 01:31:16] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:31:16
+[2026-03-06 01:31:16] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 01:31:16
+[2026-03-06 01:31:17] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:31:17
+[2026-03-06 01:31:18] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 01:31:18
+[2026-03-06 01:32:34] SESSION_END | User: System Owner
+[2026-03-06 01:32:44] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-06 01:33:10] SESSION_END | User: Mujeeb
+[2026-03-06 01:35:01] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 01:35:42] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Adeleke Solomon added for Software Development Magazine | Time: 2026-03-06 01:35:42
+[2026-03-06 01:35:53] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola Adewunmi added for Software Development Magazine | Time: 2026-03-06 01:35:53
+[2026-03-06 01:48:26] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 01:50:21] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Mujeeb (ID: 30093831) | Time: 2026-03-06 01:50:21
+[2026-03-06 01:50:46] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Damilare Idowu (ID: 30093832) | Time: 2026-03-06 01:50:46
+[2026-03-06 01:51:06] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Livingstone Joseph (ID: 30093833) | Time: 2026-03-06 01:51:06
+[2026-03-06 01:51:33] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Folorunsho (ID: 30093834) | Time: 2026-03-06 01:51:33
+[2026-03-06 01:51:46] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Solomon Adeleke (ID: 30093835) | Time: 2026-03-06 01:51:46
+[2026-03-06 01:52:01] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Rimisola Adewunmi (ID: 30093836) | Time: 2026-03-06 01:52:01
+[2026-03-06 01:53:19] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: D55BF | Type: Magazine | Qty: 7 | Time: 2026-03-06 01:53:19
+[2026-03-06 01:53:38] ACTION | User: 30114413 | Task: BORROW | Info: Mujeeb borrowed Software Development Magazine | Time: 2026-03-06 01:53:38
+[2026-03-06 01:53:51] ACTION | User: 30114413 | Task: BORROW | Info: Damilare Idowu borrowed Software Development Magazine | Time: 2026-03-06 01:53:51
+[2026-03-06 01:53:59] ACTION | User: 30114413 | Task: BORROW | Info: Livingstone Joseph borrowed Software Development Magazine | Time: 2026-03-06 01:53:59
+[2026-03-06 01:54:24] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Folorunsho added for Software Development Magazine | Time: 2026-03-06 01:54:24
+[2026-03-06 01:54:33] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Solomon Adeleke added for Software Development Magazine | Time: 2026-03-06 01:54:33
+[2026-03-06 01:54:41] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola Adewunmi added for Software Development Magazine | Time: 2026-03-06 01:54:41
+[2026-03-06 01:55:45] ACTION | User: 30114413 | Task: RETURN | Info: Software Development Magazine returned by Livingstone Joseph | Time: 2026-03-06 01:55:45
+[2026-03-06 01:56:06] ACTION | User: 30114413 | Task: WAITLIST_BYPASS | Info: Librarian bypassed queue for Software Development Magazine | Time: 2026-03-06 01:56:06
+[2026-03-06 01:56:50] ACTION | User: 30114413 | Task: RETURN | Info: Software Development Magazine returned by Damilare Idowu | Time: 2026-03-06 01:56:50
+[2026-03-06 01:56:54] ACTION | User: 30114413 | Task: WAITLIST_FULFILLED | Info: Item assigned to Rimisola Adewunmi | Time: 2026-03-06 01:56:54
+[2026-03-06 01:58:39] ACTION | User: 30114413 | Task: BORROW | Info: Folorunsho borrowed Software Development Magazine | Time: 2026-03-06 01:58:39
+[2026-03-06 01:59:52] SESSION_END | User: System Owner
+[2026-03-06 02:05:49] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:06:49] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Mujeeb (ID: 30093831) | Time: 2026-03-06 02:06:49
+[2026-03-06 02:07:13] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Damilare Idowu (ID: 30093832) | Time: 2026-03-06 02:07:13
+[2026-03-06 02:07:30] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Livingstone Joseph (ID: 30093833) | Time: 2026-03-06 02:07:30
+[2026-03-06 02:07:46] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Folorunsho (ID: 30093834) | Time: 2026-03-06 02:07:45
+[2026-03-06 02:07:59] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Solomon Adeleke (ID: 30093835) | Time: 2026-03-06 02:07:59
+[2026-03-06 02:08:16] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Rimisola Adewunmi (ID: 30093836) | Time: 2026-03-06 02:08:16
+[2026-03-06 02:08:42] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: D55BF | Type: Magazine | Qty: 7 | Time: 2026-03-06 02:08:42
+[2026-03-06 02:08:59] ACTION | User: 30114413 | Task: BORROW | Info: Mujeeb borrowed Software Development Magazine | Time: 2026-03-06 02:08:59
+[2026-03-06 02:09:06] ACTION | User: 30114413 | Task: BORROW | Info: Damilare Idowu borrowed Software Development Magazine | Time: 2026-03-06 02:09:06
+[2026-03-06 02:09:15] ACTION | User: 30114413 | Task: BORROW | Info: Livingstone Joseph borrowed Software Development Magazine | Time: 2026-03-06 02:09:15
+[2026-03-06 02:09:24] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Folorunsho added for Software Development Magazine | Time: 2026-03-06 02:09:24
+[2026-03-06 02:09:32] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Solomon Adeleke added for Software Development Magazine | Time: 2026-03-06 02:09:32
+[2026-03-06 02:09:41] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola Adewunmi added for Software Development Magazine | Time: 2026-03-06 02:09:41
+[2026-03-06 02:12:17] SESSION_END | User: System Owner
+[2026-03-06 02:14:04] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:16:47] ACTION | User: 30114413 | Task: USER_CREATED | Info: Added user: Asellly Role: Librarian | Time: 2026-03-06 02:16:47
+[2026-03-06 02:17:19] ACTION | User: 30114413 | Task: DELETE_USER | Info: Removed a User (Masked ID) | Time: 2026-03-06 02:17:19
+[2026-03-06 02:17:19] DELETE_USER by 30114413 on ID 103
+[2026-03-06 02:18:07] SESSION_END | User: System Owner
+[2026-03-06 02:19:50] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:20:25] SESSION_END | User: System Owner
+[2026-03-06 02:21:25] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:22:42] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Mujeeb (ID: 30093831) | Time: 2026-03-06 02:22:42
+[2026-03-06 02:22:56] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Damilare (ID: 30093832) | Time: 2026-03-06 02:22:56
+[2026-03-06 02:23:13] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Livingstone (ID: 30093833) | Time: 2026-03-06 02:23:13
+[2026-03-06 02:24:32] SESSION_END | User: System Owner
+[2026-03-06 02:24:54] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:25:51] SESSION_END | User: System Owner
+[2026-03-06 02:26:10] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:26:18] SESSION_END | User: System Owner
+[2026-03-06 02:35:27] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 02:35:27
+[2026-03-06 02:35:27] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:36:25] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Mujeeb (ID: 30093831) | Time: 2026-03-06 02:36:25
+[2026-03-06 02:36:50] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Damilare (ID: 30093832) | Time: 2026-03-06 02:36:50
+[2026-03-06 02:37:06] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Livingdtonre (ID: 30093833) | Time: 2026-03-06 02:37:06
+[2026-03-06 02:37:20] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Folorunsho (ID: 30093834) | Time: 2026-03-06 02:37:20
+[2026-03-06 02:37:37] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Solomon (ID: 30093835) | Time: 2026-03-06 02:37:37
+[2026-03-06 02:37:50] ACTION | User: 30114413 | Task: STUDENT_REG | Info: Registered: Rimisola (ID: 30093836) | Time: 2026-03-06 02:37:50
+[2026-03-06 02:38:26] ACTION | User: 30114413 | Task: STOCK_UPDATE | Info: ID: D55BF | Type: Magazine | Qty: 10 | Time: 2026-03-06 02:38:26
+[2026-03-06 02:38:53] ACTION | User: 30114413 | Task: BORROW | Info: Mujeeb borrowed Software Development Magazine | Time: 2026-03-06 02:38:53
+[2026-03-06 02:39:02] ACTION | User: 30114413 | Task: BORROW | Info: Damilare borrowed Software Development Magazine | Time: 2026-03-06 02:39:02
+[2026-03-06 02:39:13] ACTION | User: 30114413 | Task: BORROW | Info: Livingdtonre borrowed Software Development Magazine | Time: 2026-03-06 02:39:13
+[2026-03-06 02:39:23] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Folorunsho added for Software Development Magazine | Time: 2026-03-06 02:39:23
+[2026-03-06 02:39:32] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Solomon added for Software Development Magazine | Time: 2026-03-06 02:39:32
+[2026-03-06 02:40:27] SESSION_END | User: System Owner
+[2026-03-06 02:40:36] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 02:40:36
+[2026-03-06 02:40:36] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:43:48] SESSION_END | User: System Owner
+[2026-03-06 02:44:07] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 02:44:07
+[2026-03-06 02:44:08] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 02:44:24] SESSION_END | User: System Owner
+[2026-03-06 11:16:27] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 11:16:27
+[2026-03-06 11:16:27] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 11:17:28] SESSION_END | User: System Owner
+[2026-03-06 11:20:00] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 11:20:00
+[2026-03-06 11:20:00] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 14:21:09] SESSION_END | User: System Owner
+[2026-03-06 14:21:23] FAILED LOGIN ATTEMPT: Masked ID entered
+[2026-03-06 14:21:36] FAILED LOGIN ATTEMPT: Masked ID entered
+[2026-03-06 14:21:43] FAILED LOGIN ATTEMPT: Masked ID entered
+[2026-03-06 14:21:51] FAILED LOGIN ATTEMPT: Masked ID entered
+[2026-03-06 14:22:08] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 14:22:08
+[2026-03-06 14:22:08] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 14:22:53] ACTION | User: 30114413 | Task: CREATE_USER | Info: Target User: Mujeeb (Masked ID) | Time: 2026-03-06 14:22:53
+[2026-03-06 14:22:53] CREATE_USER by 30114413 on ID 102
+[2026-03-06 14:23:46] SESSION_END | User: System Owner
+[2026-03-06 14:23:53] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 14:23:53
+[2026-03-06 14:23:53] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-06 20:02:39] ACTION | User: 102 | Task: ADD_ITEM | Info: Added Book: SDI Magazine (Software Development Insights) | Time: 2026-03-06 20:02:39
+[2026-03-06 20:02:45] ACTION | User: Mujeeb | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:02:45
+[2026-03-06 20:02:48] ACTION | User: Mujeeb | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:02:48
+[2026-03-06 20:02:54] ACTION | User: Mujeeb | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:02:54
+[2026-03-06 20:02:56] ACTION | User: Mujeeb | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:02:56
+[2026-03-06 20:03:01] ACTION | User: Mujeeb | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:03:01
+[2026-03-06 20:03:02] ACTION | User: Mujeeb | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:03:02
+[2026-03-06 20:03:04] ACTION | User: Mujeeb | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:03:04
+[2026-03-06 20:03:05] ACTION | User: Mujeeb | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:03:05
+[2026-03-06 20:05:26] ACTION | User: 102 | Task: ADD_ITEM | Info: Added Book: SDI Magazine (Software Development Insights | Time: 2026-03-06 20:05:26
+[2026-03-06 20:06:15] ACTION | User: Mujeeb | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:06:15
+[2026-03-06 20:06:18] ACTION | User: Mujeeb | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:06:18
+[2026-03-06 20:06:24] ACTION | User: Mujeeb | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:06:24
+[2026-03-06 20:06:25] ACTION | User: Mujeeb | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:06:25
+[2026-03-06 20:06:32] ACTION | User: Mujeeb | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:06:32
+[2026-03-06 20:06:32] ACTION | User: Mujeeb | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:06:32
+[2026-03-06 20:06:48] SESSION_END | User: Mujeeb
+[2026-03-06 20:07:01] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 20:07:01
+[2026-03-06 20:07:01] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 20:07:36] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: SDI Magazine (Software Development Insights | Time: 2026-03-06 20:07:36
+[2026-03-06 20:07:43] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:07:43
+[2026-03-06 20:07:44] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:07:44
+[2026-03-06 20:41:40] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 20:41:40
+[2026-03-06 20:41:40] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 20:42:51] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: SDI Magazine (Software Development Insights) | Time: 2026-03-06 20:42:51
+[2026-03-06 20:42:57] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:42:57
+[2026-03-06 20:42:58] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:42:58
+[2026-03-06 20:43:04] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:43:04
+[2026-03-06 20:43:05] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:43:05
+[2026-03-06 20:43:06] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:43:06
+[2026-03-06 20:43:07] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:43:07
+[2026-03-06 20:43:39] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:43:39
+[2026-03-06 20:45:43] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 20:45:43
+[2026-03-06 20:45:43] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 20:46:20] ACTION | User: 30114413 | Task: USER_CREATED | Info: Added user: adex Role: Librarian | Time: 2026-03-06 20:46:20
+[2026-03-06 20:54:06] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 20:54:06
+[2026-03-06 20:54:06] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 20:54:37] ACTION | User: 30114413 | Task: WAITLIST_REMOVE | Info: Manual removal from queue | Time: 2026-03-06 20:54:37
+[2026-03-06 20:54:44] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:54:44
+[2026-03-06 20:54:50] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:54:50
+[2026-03-06 20:54:52] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:54:52
+[2026-03-06 20:54:53] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:54:53
+[2026-03-06 20:54:56] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:54:56
+[2026-03-06 20:54:59] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:54:59
+[2026-03-06 20:54:59] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:54:59
+[2026-03-06 20:55:00] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:55:00
+[2026-03-06 20:55:06] ACTION | User: 30114413 | Task: WAITLIST_REMOVE | Info: Manual removal from queue | Time: 2026-03-06 20:55:06
+[2026-03-06 20:55:09] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:55:09
+[2026-03-06 20:55:11] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:55:11
+[2026-03-06 20:55:14] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:55:14
+[2026-03-06 20:56:24] ACTION | User: 30114413 | Task: ADD_ITEM | Info: Added Book: SDI Magazine (Software Development Insights | Time: 2026-03-06 20:56:24
+[2026-03-06 20:56:30] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:56:30
+[2026-03-06 20:56:32] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:56:32
+[2026-03-06 20:56:39] ACTION | User: System Owner | Task: UNDO | Info: System state reverted to previous version. | Time: 2026-03-06 20:56:39
+[2026-03-06 20:56:40] ACTION | User: System Owner | Task: REDO | Info: System state restored forward. | Time: 2026-03-06 20:56:40
+[2026-03-06 21:12:19] ACTION | User: SYSTEM | Task: STARTUP | Info: Local data successfully synchronized. | Time: 2026-03-06 21:12:19
+[2026-03-06 21:12:19] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 21:12:31] ACTION | User: 30114413 | Task: WAITLIST_REMOVE | Info: Manual removal from queue | Time: 2026-03-06 21:12:31
+[2026-03-06 21:12:35] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:12:35
+[2026-03-06 21:12:38] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:12:38
+[2026-03-06 21:12:40] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:12:40
+[2026-03-06 21:13:24] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola added for Software Development Magazine | Time: 2026-03-06 21:13:24
+[2026-03-06 21:13:32] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:13:32
+[2026-03-06 21:13:33] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:13:33
+[2026-03-06 21:14:07] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:14:07
+[2026-03-06 21:15:02] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola added for Software Development Magazine | Time: 2026-03-06 21:15:02
+[2026-03-06 21:15:27] ACTION | User: 30114413 | Task: WAITLIST_REMOVE | Info: Manual removal from queue | Time: 2026-03-06 21:15:27
+[2026-03-06 21:15:31] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:15:31
+[2026-03-06 21:15:36] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:15:36
+[2026-03-06 21:15:48] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:15:48
+[2026-03-06 21:15:49] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:15:49
+[2026-03-06 21:15:53] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:15:53
+[2026-03-06 21:15:54] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:15:54
+[2026-03-06 21:15:58] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:15:58
+[2026-03-06 21:15:58] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:15:58
+[2026-03-06 21:16:00] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:00
+[2026-03-06 21:16:01] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:01
+[2026-03-06 21:16:09] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:16:09
+[2026-03-06 21:16:11] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:11
+[2026-03-06 21:16:22] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:16:22
+[2026-03-06 21:16:24] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:24
+[2026-03-06 21:16:26] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:16:26
+[2026-03-06 21:16:27] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:27
+[2026-03-06 21:16:28] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:16:28
+[2026-03-06 21:16:29] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:29
+[2026-03-06 21:16:29] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:16:29
+[2026-03-06 21:16:30] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:30
+[2026-03-06 21:16:31] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:16:31
+[2026-03-06 21:16:44] ACTION | User: 30114413 | Task: WAITLIST_ADD | Info: Rimisola added for Software Development Magazine | Time: 2026-03-06 21:16:44
+[2026-03-06 21:16:50] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:16:50
+[2026-03-06 21:16:51] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:51
+[2026-03-06 21:16:55] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:16:55
+[2026-03-06 21:16:56] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:16:56
+[2026-03-06 21:17:16] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:17:16
+[2026-03-06 21:17:17] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:17:17
+[2026-03-06 21:46:29] ACTION | User: System Owner | Task: REDO | Info: Global state restored forward. | Time: 2026-03-06 21:46:29
+[2026-03-06 21:46:31] ACTION | User: System Owner | Task: UNDO | Info: Global state reverted. | Time: 2026-03-06 21:46:31
+[2026-03-06 21:48:24] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 21:48:46] User: 30114413 | WAITLIST | Added student to waitlist for Software Development Magazine
+[2026-03-06 21:49:06] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 21:49:17] User: System Owner | REDO | Global state restored.
+[2026-03-06 21:49:35] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 21:49:37] User: System Owner | REDO | Global state restored.
+[2026-03-06 21:50:00] User: 30114413 | WAITLIST | Added student to waitlist for Software Development Magazine
+[2026-03-06 21:50:56] User: 30114413 | BORROW | Mujeeb borrowed Refactoring
+[2026-03-06 21:51:11] User: 30114413 | BORROW | Damilare borrowed Refactoring
+[2026-03-06 21:51:25] User: 30114413 | BORROW | Livingdtonre borrowed The Pragmatic Programmer
+[2026-03-06 21:51:55] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 21:51:58] User: System Owner | REDO | Global state restored.
+[2026-03-06 21:52:28] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 21:52:30] User: System Owner | REDO | Global state restored.
+[2026-03-06 21:52:36] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 21:52:37] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 21:52:38] User: System Owner | REDO | Global state restored.
+[2026-03-06 21:52:39] User: System Owner | REDO | Global state restored.
+[2026-03-06 21:52:43] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 21:52:44] User: System Owner | REDO | Global state restored.
+[2026-03-06 21:52:45] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 21:52:45] User: System Owner | REDO | Global state restored.
+[2026-03-06 21:52:50] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 22:15:15] SESSION_END | User: System Owner
+[2026-03-06 22:15:46] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 22:19:16] User: 30114413 | RETURN | Software Development Magazine returned by Mujeeb
+[2026-03-06 22:20:31] User: 30114413 | RETURN | Software Development Magazine returned by Damilare
+[2026-03-06 22:20:41] User: 30114413 | BORROW | Folorunsho borrowed Software Development Magazine
+[2026-03-06 22:22:16] User: 30114413 | CLEAR | Waitlist cleared.
+[2026-03-06 22:22:36] User: 30114413 | RETURN | Software Development Magazine returned by Livingdtonre
+[2026-03-06 22:22:56] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 22:23:09] User: System Owner | REDO | Global state restored.
+[2026-03-06 22:23:29] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 22:23:33] User: System Owner | REDO | Global state restored.
+[2026-03-06 22:23:41] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 22:23:42] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 22:23:42] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 22:23:47] User: System Owner | REDO | Global state restored.
+[2026-03-06 22:23:52] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 22:23:54] User: System Owner | REDO | Global state restored.
+[2026-03-06 22:23:56] User: System Owner | REDO | Global state restored.
+[2026-03-06 22:26:00] SESSION_END | User: System Owner
+[2026-03-06 22:26:37] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 22:28:52] User: 30114413 | DELETE_ITEM | Removed 065AB Reason: Obsolete
+[2026-03-06 22:29:24] User: System Owner | UNDO | Global state reverted.
+[2026-03-06 22:33:52] User: 30114413 | UPDATE_USER | Target User: Funmi (Masked ID)
+[2026-03-06 22:33:52] UPDATE_USER by 30114413 on ID 103
+[2026-03-06 22:34:22] User: 30114413 | DELETE_USER | Removed a User (Masked ID)
+[2026-03-06 22:34:22] DELETE_USER by 30114413 on ID 103
+[2026-03-06 22:35:38] SESSION_END | User: System Owner
+[2026-03-06 22:35:51] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-06 22:51:51] User: 102 | BORROW | Livingdtonre borrowed Software Development Magazine
+[2026-03-06 22:52:07] User: Mujeeb | UNDO | Global state reverted.
+[2026-03-06 22:52:25] User: Mujeeb | REDO | Global state restored.
+[2026-03-06 22:52:44] User: 102 | CLEAR | Waitlist cleared.
+[2026-03-06 22:52:49] SESSION_END | User: Mujeeb
+[2026-03-06 22:53:03] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 23:38:27] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-06 23:38:54] User: 30114413 | CLEAR | Waitlist cleared.
+[2026-03-07 00:13:46] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 00:13:55] SESSION_END | User: System Owner
+[2026-03-07 00:14:59] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 00:20:50] User: 30114413 | CLEAR | Waitlist cleared.
+[2026-03-07 00:42:13] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 00:42:41] User: 30114413 | BORROW | Rimisola borrowed Software Development Magazine
+[2026-03-07 00:43:31] User: 30114413 | WAITLIST | Added student to waitlist for Software Development Magazine
+[2026-03-07 00:44:14] User: 30114413 | WAITLIST | Added student to waitlist for Software Development Magazine
+[2026-03-07 00:44:27] User: 30114413 | WAITLIST | Added student to waitlist for Software Development Magazine
+[2026-03-07 00:45:34] User: 30114413 | WAITLIST | Added student to waitlist for Software Development Magazine
+[2026-03-07 00:46:24] User: 30114413 | RETURN | Software Development Magazine returned by Rimisola
+[2026-03-07 00:46:34] User: 30114413 | BORROW | Mujeeb borrowed Software Development Magazine
+[2026-03-07 01:10:16] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 01:10:56] User: 30114413 | BORROW_DENIED | Folorunsho already possesses Software Development Magazine
+[2026-03-07 01:13:18] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 01:24:40] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 01:42:22] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 01:44:04] User: 30114413 | BORROW_DENIED | Livingdtonre already possesses Software Development Magazine
+[2026-03-07 01:46:39] User: 30114413 | BORROW_DENIED | Livingdtonre already possesses Software Development Magazine
+[2026-03-07 01:47:43] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 01:48:04] User: 30114413 | BORROW_DENIED | Livingdtonre already possesses Software Development Magazine
+[2026-03-07 01:49:25] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 01:49:40] User: 30114413 | BORROW_DENIED | Livingdtonre already possesses Software Development Magazine
+[2026-03-07 01:51:32] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 01:51:44] User: 30114413 | BORROW_DENIED | Livingdtonre already possesses Software Development Magazine
+[2026-03-07 01:59:18] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 02:03:40] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 02:06:18] SESSION_END | User: System Owner
+[2026-03-07 12:00:33] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 12:04:40] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 12:27:43] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 12:29:02] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 14:51:21] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 14:53:32] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 14:58:12] SESSION_END | User: System Owner
+[2026-03-07 14:58:31] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 14:59:03] SESSION_END | User: System Owner
+[2026-03-07 14:59:11] SESSION_START | User: Mujeeb | ID: 102

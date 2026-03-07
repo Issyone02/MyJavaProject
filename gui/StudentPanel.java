@@ -23,13 +23,11 @@ public class StudentPanel extends JPanel {
         setLayout(new BorderLayout(15, 15));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        String[] columns = {"ID", "Name", "No of Borrowed Items", "Borrowed Titles", "Due Dates"};
+        String[] columns = {"ID", "Name", "System Status", "Borrowed Count", "Titles", "Due Dates"};
         model = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         table = new JTable(model);
-
-        // --- CRITICAL: Initialize Sorter ---
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
 
@@ -38,11 +36,11 @@ public class StudentPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 int row = table.rowAtPoint(e.getPoint());
                 int col = table.columnAtPoint(e.getPoint());
-                if (row != -1 && (col == 3 || col == 4)) {
+                if (row != -1 && (col == 4 || col == 5)) {
                     int modelRow = table.convertRowIndexToModel(row);
                     String studentName = (String) model.getValueAt(modelRow, 1);
                     String content = (String) model.getValueAt(modelRow, col);
-                    showDetailsPopup(((col == 3) ? "Items: " : "Deadlines: ") + studentName, content);
+                    showDetailsPopup(((col == 4) ? "Items: " : "Deadlines: ") + studentName, content);
                 }
             }
         });
@@ -52,11 +50,15 @@ public class StudentPanel extends JPanel {
         JButton editBtn = new JButton("Edit Name");
         JButton deleteBtn = new JButton("Delete Student");
         deleteBtn.setBackground(new Color(255, 150, 150));
+        deleteBtn.setForeground(Color.WHITE);
 
         boolean isSuper = AuthManager.isSuperAdmin(currentUserId);
-        deleteBtn.setEnabled(isSuper);
-        editBtn.setEnabled(isSuper);
-        btnPanel.add(addBtn); btnPanel.add(editBtn); btnPanel.add(deleteBtn);
+        editBtn.setVisible(isSuper);
+        deleteBtn.setVisible(isSuper);
+
+        btnPanel.add(addBtn);
+        btnPanel.add(editBtn);
+        btnPanel.add(deleteBtn);
 
         JLabel header = new JLabel("STUDENT RECORDS", JLabel.CENTER);
         header.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -72,24 +74,29 @@ public class StudentPanel extends JPanel {
         refreshTable();
     }
 
-    // --- GLOBAL SEARCH LOGIC ---
+    private boolean confirmAdminPassword() {
+        JPasswordField pf = new JPasswordField();
+        int res = JOptionPane.showConfirmDialog(this, pf, "Admin Password Required:", JOptionPane.OK_CANCEL_OPTION);
+        return (res == JOptionPane.OK_OPTION) && AuthManager.validate(currentUserId, new String(pf.getPassword()));
+    }
+
     public void applyFilter(String text) {
-        if (sorter == null) return;
-        if (text == null || text.trim().isEmpty()) {
-            sorter.setRowFilter(null);
-        } else {
-            // Searches Name, ID, and borrowed titles simultaneously
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-        }
+        if (sorter != null) sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
     }
 
     public void refreshTable() {
         model.setRowCount(0);
         for (Student s : manager.getStudents()) {
+            String status = s.calculateStatus(manager.getWaitlist());
             String titles = s.getCurrentLoans().stream().map(r -> r.getItem().getTitle()).collect(Collectors.joining(", "));
             String dueDates = s.getCurrentLoans().stream().map(r -> r.getDueDate().toString()).collect(Collectors.joining(", "));
-            model.addRow(new Object[]{s.getStudentId(), s.getName(), s.getCurrentLoans().size(),
-                    titles.isEmpty() ? "None" : titles, dueDates.isEmpty() ? "N/A" : dueDates});
+
+            model.addRow(new Object[]{
+                    s.getStudentId(), s.getName(), status,
+                    s.getCurrentLoans().size(),
+                    titles.isEmpty() ? "None" : titles,
+                    dueDates.isEmpty() ? "N/A" : dueDates
+            });
         }
     }
 
@@ -104,13 +111,14 @@ public class StudentPanel extends JPanel {
     private void handleAddStudent() {
         JTextField idField = new JTextField();
         JTextField nameField = new JTextField();
-        Object[] message = { "ID (Numbers):", idField, "Name:", nameField };
-        if (JOptionPane.showConfirmDialog(this, message, "Register", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        Object[] message = { "ID:", idField, "Full Name:", nameField };
+        if (JOptionPane.showConfirmDialog(this, message, "Register Student", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String id = idField.getText().trim();
             String name = nameField.getText().trim();
             if (!id.isEmpty() && !name.isEmpty()) {
+                // Manager handles saveState and persistence
                 manager.addStudent(new Student(id, name));
-                manager.addLog(String.valueOf(currentUserId), "STUDENT_REG", "Registered: " + name + " (" + id + ")");
+                manager.addLog(String.valueOf(currentUserId), "STUDENT_REG", name);
                 refreshTable();
             }
         }
@@ -119,25 +127,26 @@ public class StudentPanel extends JPanel {
     private void handleEditStudent() {
         int row = table.getSelectedRow();
         if (row == -1) return;
-        int modelRow = table.convertRowIndexToModel(row);
-        String id = (String) model.getValueAt(modelRow, 0);
-        String oldName = (String) model.getValueAt(modelRow, 1);
+        int mRow = table.convertRowIndexToModel(row);
+        String id = (String) model.getValueAt(mRow, 0);
+        String oldName = (String) model.getValueAt(mRow, 1);
+
         String newName = JOptionPane.showInputDialog(this, "Update Name:", oldName);
-        if (newName != null && !newName.trim().isEmpty()) {
+        if (newName != null && !newName.trim().isEmpty() && confirmAdminPassword()) {
             manager.updateStudent(id, newName.trim());
-            manager.addLog(String.valueOf(currentUserId), "STUDENT_EDIT", "Student renamed: " + id);
             refreshTable();
         }
     }
 
     private void handleDeleteStudent() {
         int row = table.getSelectedRow();
-        if (row != -1) {
-            int modelRow = table.convertRowIndexToModel(row);
-            String id = (String) model.getValueAt(modelRow, 0);
-            if (JOptionPane.showConfirmDialog(this, "Delete " + id + "?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        if (row == -1) return;
+        int mRow = table.convertRowIndexToModel(row);
+        String id = (String) model.getValueAt(mRow, 0);
+
+        if (JOptionPane.showConfirmDialog(this, "Delete Student?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            if (confirmAdminPassword()) {
                 manager.removeStudent(id);
-                manager.addLog(String.valueOf(currentUserId), "STUDENT_DEL", "Deleted student ID: " + id);
                 refreshTable();
             }
         }

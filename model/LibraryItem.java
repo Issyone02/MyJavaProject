@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 /**
  * Abstract base class for all library items.
- * Fixed: Synchronized Total and Available copy logic to prevent column mismatch.
+ * Handles synchronized Total and Available copy logic.
  */
 public abstract class LibraryItem implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String id, title, author;
     private int year;
     private int totalCopies = 1;
@@ -19,7 +21,6 @@ public abstract class LibraryItem implements Serializable {
         this.title = title;
         this.author = author;
         this.year = year;
-        // Initial state: 1 total unit, 1 available unit.
         this.totalCopies = 1;
         this.availableCopies = 1;
     }
@@ -45,31 +46,19 @@ public abstract class LibraryItem implements Serializable {
     public void setYear(int year) { this.year = year; }
 
     /**
-     * Updates the total physical units.
-     * Logic: Captures items currently borrowed and ensures they remain borrowed
-     * after the total quantity is changed.
+     * Updates the total physical units while preserving current loan counts.
      */
     public void setTotalCopies(int n) {
-        // 1. Calculate how many items are currently with students (Borrowed)
-        // Example: Total 10, Available 7 -> Borrowed = 3
-        int currentBorrowed = this.totalCopies - this.availableCopies;
+        // Calculate items currently out on loan
+        int currentBorrowed = Math.max(0, this.totalCopies - this.availableCopies);
 
-        // 2. Update the total to the new value (e.g., 15)
         this.totalCopies = n;
 
-        // 3. Calculate new available count
-        // New Total (15) - Still Borrowed (3) = New Available (12)
+        // Calculate new available count based on new total minus items still out
         int newAvailable = n - currentBorrowed;
 
-        // 4. Safety Check: If user reduces total below the number of items currently out
+        // Boundary check: if total is reduced below current loans
         if (newAvailable < 0) {
-
-    /**
-     * This means we have more items borrowed than we now have in total.
-     * We set available to 0 until items are returned.
-     */
-
-
             this.availableCopies = 0;
         } else {
             this.availableCopies = newAvailable;
@@ -80,7 +69,6 @@ public abstract class LibraryItem implements Serializable {
      * Updates available units with strict boundary checks.
      */
     public void setAvailableCopies(int n) {
-        // Safety guard: Available units cannot exceed physical total or be negative
         if (n > totalCopies) {
             this.availableCopies = totalCopies;
         } else if (n < 0) {

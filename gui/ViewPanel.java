@@ -12,7 +12,6 @@ public class ViewPanel extends JPanel {
     private final JTable table;
     private final DefaultTableModel model;
     private TableRowSorter<DefaultTableModel> sorter;
-
     private final JComboBox<String> sortBox;
 
     public ViewPanel(LibraryManager manager) {
@@ -20,9 +19,9 @@ public class ViewPanel extends JPanel {
         setLayout(new BorderLayout(15, 15));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // --- 1. SORT ONLY TOOLBAR ---
+        // --- 1. TOOLBAR SETUP ---
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        toolbar.add(new JLabel("Sort By:"));
+        toolbar.add(new JLabel("Sort Inventory By:"));
         sortBox = new JComboBox<>(new String[]{"Default", "Title", "Year", "Type"});
         toolbar.add(sortBox);
 
@@ -30,18 +29,19 @@ public class ViewPanel extends JPanel {
         toolbar.add(resetBtn);
 
         // --- 2. TABLE SETUP ---
-        String[] columns = {"ID", "Type", "Title", "Author", "Year", "Available Copies"};
+        String[] columns = {"Item ID", "Category", "Title", "Author/Creator", "Year", "Stock Available"};
         model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
         };
         table = new JTable(model);
 
-        // Added Sorter for Global Search
+        // Initialize Sorter for Global Search Functionality
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
+        table.setRowHeight(28);
+        table.getTableHeader().setReorderingAllowed(false);
 
-        table.setRowHeight(25);
         add(toolbar, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -55,23 +55,34 @@ public class ViewPanel extends JPanel {
         refreshTable(manager.getInventory());
     }
 
-    // Required for MainWindow Global Search
+    /**
+     * Integrated with MainWindow's Search Bar.
+     * Filters the table dynamically based on user input.
+     */
     public void applyFilter(String text) {
-        if (text.trim().length() == 0) {
+        if (sorter == null) return;
+        if (text == null || text.trim().isEmpty()) {
             sorter.setRowFilter(null);
         } else {
+            // Case-insensitive regex filter
             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
         }
     }
 
     private void handleSort() {
         String selection = (String) sortBox.getSelectedItem();
-        if (selection == null || selection.equals("Default")) return;
+        if (selection == null) return;
 
-        // Matches the JComboBox initialization: new String[]{"Default", "Title", "Year", "Type"}
-        if ("Title".equals(selection)) manager.mergeSortByTitle();
-        else if ("Year".equals(selection)) manager.selectionSortByYear();
-        else if ("Type".equals(selection)) manager.sortByType();
+        if ("Title".equals(selection)) {
+            manager.mergeSortByTitle();
+        } else if ("Year".equals(selection)) {
+            manager.selectionSortByYear();
+        } else if ("Type".equals(selection)) {
+            manager.sortByType();
+        } else {
+            // Default sorting logic (usually by ID)
+            manager.getInventory().sort((a, b) -> a.getId().compareToIgnoreCase(b.getId()));
+        }
 
         refreshTable(manager.getInventory());
     }
@@ -80,10 +91,18 @@ public class ViewPanel extends JPanel {
         model.setRowCount(0);
         if (itemsToDisplay == null) return;
         for (LibraryItem item : itemsToDisplay) {
-            model.addRow(new Object[]{item.getId(), item.getType(), item.getTitle(),
-                    item.getAuthor(), item.getYear(), item.getAvailableCopies()});
+            model.addRow(new Object[]{
+                    item.getId(),
+                    item.getType().toUpperCase(),
+                    item.getTitle(),
+                    item.getAuthor(),
+                    item.getYear(),
+                    item.getAvailableCopies()
+            });
         }
     }
 
-    public void refreshTable() { refreshTable(manager.getInventory()); }
+    public void refreshTable() {
+        refreshTable(manager.getInventory());
+    }
 }
