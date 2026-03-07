@@ -614,3 +614,52 @@ SESSION_START | User: 30114413 | Role: ADMIN | Time: 2026-03-04 23:24:01
 [2026-03-07 14:58:31] SESSION_START | User: System Owner | ID: 30114413
 [2026-03-07 14:59:03] SESSION_END | User: System Owner
 [2026-03-07 14:59:11] SESSION_START | User: Mujeeb | ID: 102
+[2026-03-07 15:04:15] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 15:11:00] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 16:48:53] User: 30114413 | BORROW_DENIED | Livingdtonre already possesses Software Development Magazine
+[2026-03-07 16:49:38] User: 30114413 | STUDENT_REG | Olawale Adenuga
+[2026-03-07 16:49:48] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 16:49:53] User: System Owner | REDO | Global state restored.
+[2026-03-07 16:49:59] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 16:50:01] User: System Owner | REDO | Global state restored.
+[2026-03-07 16:50:44] User: 30114413 | STUDENT_REG | Olawale Adenuga
+[2026-03-07 16:51:07] User: 30114413 | STUDENT_REG | Olajide Adeola
+[2026-03-07 17:57:27] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 18:07:32] User: 30114413 | STUDENT_REG | Oladele Adenuga
+[2026-03-07 18:07:59] User: 30114413 | STUDENT_REG | Oladele adewale
+[2026-03-07 18:13:34] SESSION_END | User: System Owner
+[2026-03-07 18:32:04] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 18:32:59] User: 30114413 | STUDENT_REG | Olalere Itunuoluwa
+[2026-03-07 19:03:04] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 19:04:45] User: 30114413 | STUDENT_REG | Olawale Adenuga
+[2026-03-07 19:05:07] User: 30114413 | STUDENT_REG | Seun Animasaun
+[2026-03-07 19:30:21] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 19:31:38] User: 30114413 | BORROW_DENIED | Livingdtonre already possesses Software Development Magazine
+[2026-03-07 19:32:50] User: 30114413 | STUDENT_REG | Oladele Adeola
+[2026-03-07 19:32:56] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 19:33:02] User: System Owner | REDO | Global state restored.
+[2026-03-07 19:33:20] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 19:33:22] User: System Owner | REDO | Global state restored.
+[2026-03-07 19:33:27] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 19:33:28] User: System Owner | REDO | Global state restored.
+[2026-03-07 19:33:56] User: 30114413 | STUDENT_REG | Oladele Adeola
+[2026-03-07 19:34:12] User: 30114413 | STUDENT_REG | Adewoyin Musa
+[2026-03-07 19:34:41] User: 30114413 | BORROW | Adewoyin Musa borrowed Software Development Magazine
+[2026-03-07 19:38:50] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 19:38:54] User: System Owner | REDO | Global state restored.
+[2026-03-07 19:39:08] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 19:39:10] User: System Owner | REDO | Global state restored.
+[2026-03-07 19:39:45] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 19:39:49] User: System Owner | UNDO | Global state reverted.
+[2026-03-07 19:39:50] User: System Owner | REDO | Global state restored.
+[2026-03-07 19:40:27] User: 30114413 | STUDENT_REG | Adewoyin Musa
+[2026-03-07 19:40:48] User: 30114413 | STUDENT_REG | Obafolarin Adeoye
+[2026-03-07 19:42:25] User: 30114413 | WAITLIST | Added student to waitlist for Software Development Magazine
+[2026-03-07 19:42:41] User: 30114413 | WAITLIST | Added student to waitlist for Software Development Magazine
+[2026-03-07 20:24:00] SESSION_END | User: System Owner
+[2026-03-07 20:24:29] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 20:55:30] SESSION_END | User: System Owner
+[2026-03-07 20:56:00] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 22:26:07] SESSION_START | User: System Owner | ID: 30114413
+[2026-03-07 22:26:49] SESSION_END | User: System Owner
+[2026-03-07 22:27:36] SESSION_START | User: System Owner | ID: 30114413

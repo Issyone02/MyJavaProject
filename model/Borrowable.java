@@ -1,21 +1,27 @@
 package model;
 
 /**
- * Updated interface to support Student-based borrowing
- * and quantity deduction.
+ * Borrowable - Interface for items that can be borrowed and returned
+ *
+ * Defines the contract for borrowing transactions.
+ * Originally designed for student-based borrowing with quantity tracking.
+ *
+ * Note: Current system handles borrowing through LibraryManager instead.
+ * This interface is kept for potential future extensions.
  */
 public interface Borrowable {
     /**
-     * Handles the deduction of available copies and
-     * link the item to the student's history.
-     * @param student The student borrowing the item.
-     * @return true if borrowing was successful (copies were available).
+     * Processes a borrow transaction for a student
+     *
+     * @param student The student borrowing the item
+     * @return true if successful (copies available), false otherwise
      */
     boolean borrowItem(Student student);
 
     /**
-     * Handles the increment of available copies when returned.
-     * @param student The student returning the item.
+     * Processes a return transaction
+     *
+     * @param student The student returning the item
      */
     void returnItem(Student student);
 }

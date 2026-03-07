@@ -48,9 +48,15 @@ public class StudentPanel extends JPanel {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton addBtn = new JButton("Register Student");
         JButton editBtn = new JButton("Edit Name");
-        JButton deleteBtn = new JButton("Delete Student");
-        deleteBtn.setBackground(new Color(255, 150, 150));
+
+        // --- UPDATED DELETE BUTTON LOGIC ---
+        JButton deleteBtn = new JButton("🗑 Delete Student");
+        // Using the same Red (255, 100, 100) as AdminPanel for consistency
+        deleteBtn.setBackground(new Color(255, 100, 100));
         deleteBtn.setForeground(Color.WHITE);
+        deleteBtn.setOpaque(true);
+        deleteBtn.setBorderPainted(false);
+        // ------------------------------------
 
         boolean isSuper = AuthManager.isSuperAdmin(currentUserId);
         editBtn.setVisible(isSuper);
@@ -112,14 +118,26 @@ public class StudentPanel extends JPanel {
         JTextField idField = new JTextField();
         JTextField nameField = new JTextField();
         Object[] message = { "ID:", idField, "Full Name:", nameField };
+
         if (JOptionPane.showConfirmDialog(this, message, "Register Student", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String id = idField.getText().trim();
             String name = nameField.getText().trim();
+
             if (!id.isEmpty() && !name.isEmpty()) {
-                // Manager handles saveState and persistence
-                manager.addStudent(new Student(id, name));
-                manager.addLog(String.valueOf(currentUserId), "STUDENT_REG", name);
-                refreshTable();
+                boolean success = manager.addStudent(new Student(id, name));
+
+                if (success) {
+                    manager.addLog(String.valueOf(currentUserId), "STUDENT_REG", name);
+                    refreshTable();
+                    JOptionPane.showMessageDialog(this, "Student registered successfully!");
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "ERROR: Student ID '" + id + "' already exists!",
+                            "Duplicate ID",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Both fields are required.", "Validation Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

@@ -4,20 +4,33 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Student - Represents a registered library user
+ *
+ * Tracks:
+ * - Student identification (ID and name)
+ * - Current borrowed items
+ * - Borrowing history
+ * - Status (Active, Waiting, Inactive)
+ */
 public class Student implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String studentId;
-    private String name;
-    private List<BorrowRecord> currentLoans = new ArrayList<>();
-    private List<BorrowRecord> history = new ArrayList<>();
+    private String studentId;                           // Unique ID (must be unique!)
+    private String name;                                 // Student full name
+    private List<BorrowRecord> currentLoans = new ArrayList<>();   // Active loans
+    private List<BorrowRecord> history = new ArrayList<>();        // Past loans
 
+
+    /** Default constructor */
     public Student() {}
 
+    /** Primary constructor */
     public Student(String studentId, String name) {
         this.studentId = studentId;
         this.name = name;
     }
+
 
     /**
      * Copy Constructor for Deep Cloning.
@@ -40,12 +53,15 @@ public class Student implements Serializable {
 
     /**
      * NEW: Determines student status in real-time.
-     * Checks if the student is currently borrowing items or is on a waitlist.
+     @param systemWaitlist Global waitlist to check against
+      * @return "Active", "Waiting in Queue", or "Inactive"
      */
     public String calculateStatus(List<String> systemWaitlist) {
+        // Check if has active loans
         if (!currentLoans.isEmpty()) {
             return "Active (" + currentLoans.size() + " items)";
         }
+
 
         // Check if student ID exists in any waitlist entry string
         String searchTag = "(" + this.studentId + ")";
@@ -58,10 +74,16 @@ public class Student implements Serializable {
         return "Inactive";
     }
 
+
+    /**
+     * Adds a newly borrowed item to current loans
+     * @param item Item being borrowed
+     */
     public void addBorrowedItem(LibraryItem item) {
         BorrowRecord record = new BorrowRecord(item);
         currentLoans.add(record);
     }
+
 
     // Standard Getters and Setters
     public String getStudentId() { return studentId; }

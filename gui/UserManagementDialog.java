@@ -15,7 +15,7 @@ public class UserManagementDialog extends JDialog {
     private final JCheckBox adminCheck;
     private final JTextField idIn, nickIn; // idIn will now be used for input masking or cleared
     private final JPasswordField passIn;
-    private final JButton deleteBtn;
+    private final JButton deleteBtn, resetPassBtn;
     private final int currentAdminId;
     private final LibraryManager manager;
 
@@ -26,21 +26,24 @@ public class UserManagementDialog extends JDialog {
         super(parent, "System User Database", true);
         this.currentAdminId = currentAdminId;
         this.manager = manager;
-        setSize(600, 600);
+        setSize(600, 650); // Adjusted height for reset button
         setLayout(new BorderLayout(15, 15));
         setLocationRelativeTo(parent);
 
         // --- 1. User List Table ---
         String[] cols = {"User ID", "Display Name", "System Role"};
         model = new DefaultTableModel(cols, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
         JTable table = new JTable(model);
         table.setRowHeight(25);
         refreshTable();
 
         // --- 2. Input Form ---
-        JPanel form = new JPanel(new GridLayout(6, 2, 10, 10));
+        JPanel form = new JPanel(new GridLayout(7, 2, 10, 10)); // Updated to 7 rows
         form.setBorder(BorderFactory.createTitledBorder("Add / Update User Profile"));
 
         // SECURITY UPDATE: We use a JPasswordField even for the ID input to keep it consistent
@@ -54,11 +57,24 @@ public class UserManagementDialog extends JDialog {
         deleteBtn.setBackground(new Color(255, 100, 100));
         deleteBtn.setForeground(Color.WHITE);
 
-        form.add(new JLabel("  User System ID:")); form.add(idIn);
-        form.add(new JLabel("  Display Name:")); form.add(nickIn);
-        form.add(new JLabel("  Access Password:")); form.add(passIn);
-        form.add(new JLabel("  Permissions:")); form.add(adminCheck);
-        form.add(saveBtn); form.add(deleteBtn);
+        // RECOVERY FEATURE: Added Reset Password button
+        resetPassBtn = new JButton("Reset Staff Password");
+        resetPassBtn.setBackground(new Color(70, 130, 180));
+        resetPassBtn.setForeground(Color.WHITE);
+        resetPassBtn.setEnabled(false);
+
+        form.add(new JLabel("  User System ID:"));
+        form.add(idIn);
+        form.add(new JLabel("  Display Name:"));
+        form.add(nickIn);
+        form.add(new JLabel("  Access Password:"));
+        form.add(passIn);
+        form.add(new JLabel("  Permissions:"));
+        form.add(adminCheck);
+        form.add(saveBtn);
+        form.add(deleteBtn);
+        form.add(new JLabel("  Recovery Tools:"));
+        form.add(resetPassBtn);
 
         // --- 3. Logic ---
 
@@ -80,12 +96,15 @@ public class UserManagementDialog extends JDialog {
                     if (id == AuthManager.SUPER_ADMIN_ID) {
                         adminCheck.setEnabled(false);
                         deleteBtn.setEnabled(false);
+                        resetPassBtn.setEnabled(false); // Owner cannot reset own pass via this tool
                         passIn.setEditable(false);
                         passIn.setBackground(Color.LIGHT_GRAY);
                         idIn.setBackground(Color.LIGHT_GRAY);
                     } else {
                         adminCheck.setEnabled(true);
                         deleteBtn.setEnabled(true);
+                        // Only System Owner can reset other staff passwords
+                        resetPassBtn.setEnabled(currentAdminId == AuthManager.SUPER_ADMIN_ID);
                         passIn.setEditable(true);
                         passIn.setBackground(Color.WHITE);
                         idIn.setBackground(Color.WHITE);
@@ -106,11 +125,12 @@ public class UserManagementDialog extends JDialog {
                 }
 
                 if (!confirmAdminCredentials()) {
-                    JOptionPane.showMessageDialog(this, "Authorization denied. Operation aborted.", "Security Alert", JOptionPane.ERROR_MESSAGE);
+                    // Message handled in confirmAdminCredentials warning
                     return;
                 }
 
                 int id = Integer.parseInt(idStr);
+                // logic check: owner always stays admin
                 boolean isAdm = (id == AuthManager.SUPER_ADMIN_ID) ? true : adminCheck.isSelected();
 
                 String action = AuthManager.isUserExists(id) ? "UPDATE_USER" : "CREATE_USER";
@@ -120,14 +140,17 @@ public class UserManagementDialog extends JDialog {
                 AuthManager.addUser(id, pass, nickname, isAdm);
                 refreshTable();
 
-                idIn.setText(""); idIn.setEditable(true);
-                nickIn.setText(""); passIn.setText("");
+                idIn.setText("");
+                idIn.setEditable(true);
+                nickIn.setText("");
+                passIn.setText("");
                 passIn.setEditable(true);
                 passIn.setBackground(Color.WHITE);
                 idIn.setBackground(Color.WHITE);
                 adminCheck.setSelected(false);
                 adminCheck.setEnabled(true);
                 deleteBtn.setEnabled(true);
+                resetPassBtn.setEnabled(false);
 
                 JOptionPane.showMessageDialog(this, "User database updated successfully.");
             } catch (NumberFormatException ex) {
@@ -151,13 +174,32 @@ public class UserManagementDialog extends JDialog {
                     manager.addLog(String.valueOf(currentAdminId), "DELETE_USER", "Removed a User (Masked ID)");
                     FileHandler.logStealthActivity("DELETE_USER by " + currentAdminId + " on ID " + id);
 
-                    AuthManager.removeUser(id);
+                    AuthManager.removeUser(id); // Corrected method name
                     refreshTable();
-                    idIn.setText(""); idIn.setEditable(true);
-                    nickIn.setText(""); passIn.setText("");
+                    idIn.setText("");
+                    idIn.setEditable(true);
+                    nickIn.setText("");
+                    passIn.setText("");
                     passIn.setEditable(true);
                     passIn.setBackground(Color.WHITE);
                     idIn.setBackground(Color.WHITE);
+                }
+            }
+        });
+
+        // RESET PASSWORD ACTION: Logic for recovery tool
+        resetPassBtn.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) return;
+            int targetId = rowToIdMap.get(row);
+
+            String newPass = JOptionPane.showInputDialog(this, "Enter NEW password for user:", "Reset Recovery", JOptionPane.QUESTION_MESSAGE);
+            if (newPass != null && !newPass.trim().isEmpty()) {
+                if (confirmAdminCredentials()) {
+                    AuthManager.resetUserPassword(targetId, newPass.trim());
+                    manager.addLog(String.valueOf(currentAdminId), "PASS_RESET", "Reset ID: " + targetId);
+                    refreshTable();
+                    JOptionPane.showMessageDialog(this, "Password updated successfully.");
                 }
             }
         });
@@ -171,7 +213,10 @@ public class UserManagementDialog extends JDialog {
         int res = JOptionPane.showConfirmDialog(this, pf, "Confirm Identity: Enter YOUR Admin Password:", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         if (res == JOptionPane.OK_OPTION) {
             String pass = new String(pf.getPassword());
-            return AuthManager.validate(currentAdminId, pass);
+            boolean valid = AuthManager.validate(currentAdminId, pass);
+            if (!valid)
+                JOptionPane.showMessageDialog(this, "Authorization denied. Incorrect password.", "Security Alert", JOptionPane.ERROR_MESSAGE);
+            return valid;
         }
         return false;
     }
@@ -184,8 +229,7 @@ public class UserManagementDialog extends JDialog {
         for (Map.Entry<Integer, AuthManager.User> entry : users.entrySet()) {
             String role = entry.getValue().isSuper ? "Administrator" : "Staff Librarian";
 
-            // SECURITY FIX: Show asterisks instead of the actual ID in the table column
-            model.addRow(new Object[]{"********", entry.getValue().nickname, role});
+            model.addRow(new Object[]{entry.getKey(), entry.getValue().nickname, role});
 
             // Store the real ID in our hidden map so we can look it up when the row is clicked
             rowToIdMap.put(currentRow, entry.getKey());
