@@ -30,7 +30,7 @@ public class StudentPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Visible columns: ID, Name, Borrowed, Items, Due Dates
-        // Column 5 (hasOverdue boolean) is stored in the model but never rendered — 
+        // Column 5 (hasOverdue boolean) is stored in the model but never rendered —
         // the custom renderer reads it to decide whether to colour column 4 red.
         String[] columns = {"ID", "Name", "Borrowed", "Items", "Due Dates"};
         model  = new VirtualTableModel(columns);
@@ -41,7 +41,7 @@ public class StudentPanel extends JPanel {
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable tbl, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(
                         tbl, value, isSelected, hasFocus, row, column);
                 if (!isSelected) {
@@ -49,15 +49,8 @@ public class StudentPanel extends JPanel {
                     c.setForeground(Color.BLACK);
                     c.setFont(c.getFont().deriveFont(Font.PLAIN));
 
-                    // Column 4 = Due Dates — go red+bold if hasOverdue flag (column 5) is set
-                    if (column == 4 && value != null && !"N/A".equals(value.toString())) {
-                        int    modelRow = tbl.convertRowIndexToModel(row);
-                        Object flag     = model.getValueAt(modelRow, 5);
-                        if (Boolean.TRUE.equals(flag)) {
-                            c.setForeground(Color.RED);
-                            c.setFont(c.getFont().deriveFont(Font.BOLD));
-                        }
-                    }
+                    // Overdue color logic removed per request.
+                    // The text "(OVERDUE)" will be displayed as part of the string value if present in the model.
                 }
                 return c;
             }
@@ -128,7 +121,7 @@ public class StudentPanel extends JPanel {
                     JOptionPane.showMessageDialog(this, "Student added.");
                 } else {
                     JOptionPane.showMessageDialog(this, "ID already exists!",
-                                                  "Error", JOptionPane.ERROR_MESSAGE);
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -186,9 +179,9 @@ public class StudentPanel extends JPanel {
         List<Object[]> rows = new ArrayList<>();
         for (StudentSummary s : controller.getStudentSummaries()) {
             rows.add(new Object[]{
-                s.studentId(), s.name(), s.loanCount(),
-                s.itemTitles(), s.dueDates(),
-                s.hasOverdue()   // index 5: read by renderer, not shown as a column
+                    s.studentId(), s.name(), s.loanCount(),
+                    s.itemTitles(), s.dueDates(),
+                    s.hasOverdue()   // index 5: read by renderer, not shown as a column
             });
         }
         model.setRows(rows);
@@ -201,6 +194,6 @@ public class StudentPanel extends JPanel {
         textArea.setText("\u2022 " + content.replace(", ", "\n\u2022 "));
         textArea.setEditable(false);
         JOptionPane.showMessageDialog(this, new JScrollPane(textArea),
-                                      title, JOptionPane.INFORMATION_MESSAGE);
+                title, JOptionPane.INFORMATION_MESSAGE);
     }
 }

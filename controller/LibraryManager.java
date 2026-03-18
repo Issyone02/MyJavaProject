@@ -93,6 +93,10 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
      * Replaces an item's fields while keeping the borrowed-copy count intact.
      * If 2 of 5 copies are out and the admin raises total to 7, available becomes 5 (7−2).
      */
+    /**
+     * Replaces an item's fields while keeping the borrowed-copy count intact.
+     * Logic: Prevents update if new total is less than currently borrowed copies.
+     */
     @Override
     public void updateItem(String userId, String id, String type, String title,
                            String author, int year, int total, String reason) {
@@ -100,10 +104,23 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
         for (int i = 0; i < catalogue.size(); i++) {
             LibraryItem existing = catalogue.get(i);
             if (existing.getId().equals(id)) {
+
+                // 1. Calculate how many are currently out with students
                 int borrowed = existing.getTotalCopies() - existing.getAvailableCopies();
+
+                // 2. NEW LOGIC: Check if the new total is physically possible
+                if (total < borrowed) {
+                    addLog(userId, "UPDATE_DENIED", "Cannot reduce total (" + total +
+                            ") below borrowed count (" + borrowed + ") for ID: " + id);
+                    // We return early here to prevent the code below from running
+                    return;
+                }
+
+                // 3. If check passes, proceed with update
                 LibraryItem updated = buildItem(type, id, title, author, year);
                 updated.setTotalCopies(total);
-                updated.setAvailableCopies(Math.max(0, total - borrowed));
+                updated.setAvailableCopies(total - borrowed); // Result will always be >= 0
+
                 saveState(false);
                 catalogue.set(i, updated);
                 addLog(userId, "UPDATE", "Item " + id + " updated: " + reason);
@@ -195,7 +212,7 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
         if (s == null || item == null) return;
         if (!s.returnItem(item)) return;
         saveState(false);
-        addLog(userId, "REMOVE_ORPHAN_LOAN", item.getTitle() + " (deleted) removed from " + s.getName() + "'s loans");
+        addLog(userId, "REMOVE_ORPHAN_BORROWED", item.getTitle() + " (deleted) removed from " + s.getName() + "'s borrowed items");
         fireChange();
     }
 

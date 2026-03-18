@@ -92,46 +92,65 @@ public class ViewPanel extends JPanel {
         JDialog dlg = new JDialog(
                 (Frame) SwingUtilities.getWindowAncestor(this), "Library Reports", true);
         dlg.setLayout(new BorderLayout(10, 10));
-        dlg.setSize(900, 650);
+        dlg.setSize(1000, 700);
         dlg.setLocationRelativeTo(this);
 
         BorrowSummary s = controller.getBorrowSummary();
+        int[] categoryCounts = countItemsByCategoryRecursively(controller.getInventory(), 0, new int[3]);
 
-        // Recursive count of catalogue titles by category (satisfies recursion requirement)
-        int[] categoryCounts = countItemsByCategoryRecursively(controller.getInventory(), 0, new int[3]); // [books, magazines, journals]
+        // --- Custom Blue Header Renderer ---
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+            @Override public Component getTableCellRendererComponent(JTable t, Object v, boolean sel, boolean foc, int r, int c) {
+                super.getTableCellRendererComponent(t, v, sel, foc, r, c);
+                setBackground(new Color(70, 130, 180)); // Steel Blue
+                setForeground(Color.WHITE);
+                setFont(getFont().deriveFont(Font.BOLD));
+                setHorizontalAlignment(JLabel.CENTER);
+                setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.WHITE));
+                return this;
+            }
+        };
 
-        // Build report text
-        StringBuilder report = new StringBuilder();
-        report.append("MIVA SLCAS - LIBRARY REPORT\n");
-        report.append("Generated: ").append(java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-              .append("\n==================================================\n\n");
-
-        report.append("CATEGORY DISTRIBUTION\n");
+        // 1. Category Distribution Table
+        String[] catCols = {"Category", "Titles", "Copies", "Percentage"};
         double cpct = s.totalCopies > 0 ? 100.0 / s.totalCopies : 0;
-        report.append(String.format("  %-12s %d books, %d copies (%.1f%%)\n",
-                "Books:", categoryCounts[0], s.bookCopies, s.bookCopies * cpct));
-        report.append(String.format("  %-12s %d magazines, %d copies (%.1f%%)\n",
-                "Magazines:", categoryCounts[1], s.magCopies, s.magCopies * cpct));
-        report.append(String.format("  %-12s %d journals, %d copies (%.1f%%)\n",
-                "Journals:", categoryCounts[2], s.journalCopies, s.journalCopies * cpct));
-        report.append(String.format("  %-12s %d copies\n", "Total:", s.totalCopies));
-        report.append(String.format("  %-12s %d\n", "Borrowed:", s.borrowedCount));
-        report.append(String.format("  %-12s %d\n\n", "Waitlist:", s.waitlistCount));
+        Object[][] catData = {
+                {"Books", categoryCounts[0], s.bookCopies, String.format("%.1f%%", s.bookCopies * cpct)},
+                {"Magazines", categoryCounts[1], s.magCopies, String.format("%.1f%%", s.magCopies * cpct)},
+                {"Journals", categoryCounts[2], s.journalCopies, String.format("%.1f%%", s.journalCopies * cpct)},
+                {"TOTAL", "-", s.totalCopies, "100%"}
+        };
+        JTable catTable = createReportTable(catData, catCols, headerRenderer);
 
-    
+        // 2. Most Borrowed Table
+        String[] mostCols = {"Rank/Item Details (Title | Author | Count)"};
+        Object[][] mostData = new Object[s.mostBorrowedLines.size()][1];
+        for(int i=0; i<s.mostBorrowedLines.size(); i++) mostData[i][0] = s.mostBorrowedLines.get(i);
+        JTable mostTable = createReportTable(mostData, mostCols, headerRenderer);
 
-        report.append("\nMOST BORROWED ITEMS\n");
-        s.mostBorrowedLines.forEach(l -> report.append(l).append("\n"));
-        report.append("\nOVERDUE ITEMS\n");
-        s.overdueLines.forEach(l -> report.append(l).append("\n"));
+        // 3. Overdue Items Table
+        String[] overdueCols = {"Overdue Records (Student | Item | Days)"};
+        Object[][] overdueData = new Object[s.overdueLines.size()][1];
+        for(int i=0; i<s.overdueLines.size(); i++) overdueData[i][0] = s.overdueLines.get(i);
+        JTable overdueTable = createReportTable(overdueData, overdueCols, headerRenderer);
 
-        // Stat card colours
+        // Right side container (Vertical stacking)
+        JPanel reportContainer = new JPanel();
+        reportContainer.setLayout(new BoxLayout(reportContainer, BoxLayout.Y_AXIS));
+        reportContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        addTableSection(reportContainer, "Category Distribution", catTable, 125);
+        addTableSection(reportContainer, "Most Borrowed Items", mostTable, 180);
+        addTableSection(reportContainer, "Current Overdue Loans", overdueTable, 180);
+
+        JScrollPane rightScroll = new JScrollPane(reportContainer);
+        rightScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        // --- Left Side: Stats Grid & Chart ---
         final Color cBook  = new Color(255,183,178);
         final Color cMag   = new Color(181,234,215);
         final Color cJourn = new Color(173,203,227);
 
-        // Left panel: 2×3 grid of stat cards + donut chart
         JPanel statsGrid = new JPanel(new GridLayout(2, 3, 8, 8));
         statsGrid.add(makeCard("Total Catalogue",  s.totalCopies,   Color.WHITE));
         statsGrid.add(makeCard("Books",            s.bookCopies,    cBook));
@@ -153,7 +172,6 @@ public class ViewPanel extends JPanel {
                 start = drawSlice(g2, x, y, size, start, fBook,  fTotal, cBook);
                 start = drawSlice(g2, x, y, size, start, fMag,   fTotal, cMag);
                 drawSlice(g2, x, y, size, start, fJourn, fTotal, cJourn);
-                // Hollow centre
                 g2.setColor(getBackground());
                 int h = (int)(size * 0.6);
                 g2.fillOval(x+(size-h)/2, y+(size-h)/2, h, h);
@@ -163,8 +181,7 @@ public class ViewPanel extends JPanel {
                 FontMetrics fm = g2.getFontMetrics();
                 g2.drawString(lbl, x+(size-fm.stringWidth(lbl))/2, y+size/2+5);
             }
-            private double drawSlice(Graphics2D g2, int x, int y, int sz,
-                                     double start, int count, int total, Color c) {
+            private double drawSlice(Graphics2D g2, int x, int y, int sz, double start, int count, int total, Color c) {
                 if (count == 0) return start;
                 double ext = -((count / (double) total) * 360.0);
                 g2.setColor(c);
@@ -179,37 +196,83 @@ public class ViewPanel extends JPanel {
         leftPanel.add(statsGrid, BorderLayout.NORTH);
         leftPanel.add(chart,     BorderLayout.CENTER);
 
-        // Right panel: scrollable plain-text report
-        JTextArea textArea = new JTextArea(report.toString());
-        textArea.setEditable(false);
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        JScrollPane textScroll = new JScrollPane(textArea);
-        textScroll.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 10));
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightScroll);
+        split.setDividerLocation(350);
 
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, textScroll);
-        split.setDividerLocation(320);
-
+        // --- Bottom Bar with Export ---
         JPanel  bottom    = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         JButton exportBtn = new JButton("Export as Text");
+        exportBtn.setToolTipText("Save table data as a text report");
         exportBtn.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
             fc.setSelectedFile(new java.io.File("Library_Report_" + LocalDate.now() + ".txt"));
             if (fc.showSaveDialog(dlg) == JFileChooser.APPROVE_OPTION) {
                 try (FileWriter w = new FileWriter(fc.getSelectedFile())) {
-                    w.write(report.toString());
-                    JOptionPane.showMessageDialog(dlg, "Report exported.");
+                    StringBuilder sb = new StringBuilder("MIVA SLCAS - LIBRARY REPORT\n");
+                    sb.append("Generated: ").append(java.time.LocalDateTime.now()).append("\n\n");
+
+                    sb.append("CATEGORY DISTRIBUTION\n---------------------\n");
+                    sb.append(tableToText(catTable)).append("\n");
+
+                    sb.append("MOST BORROWED\n-------------\n");
+                    sb.append(tableToText(mostTable)).append("\n");
+
+                    sb.append("OVERDUE ITEMS\n-------------\n");
+                    sb.append(tableToText(overdueTable));
+
+                    w.write(sb.toString());
+                    JOptionPane.showMessageDialog(dlg, "Report exported successfully.");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(dlg, "Export failed: " + ex.getMessage());
                 }
             }
         });
+
         JButton closeBtn = new JButton("Close");
         closeBtn.addActionListener(e -> dlg.dispose());
-        bottom.add(exportBtn); bottom.add(closeBtn);
+
+        bottom.add(exportBtn);
+        bottom.add(closeBtn);
 
         dlg.add(split,  BorderLayout.CENTER);
         dlg.add(bottom, BorderLayout.SOUTH);
         dlg.setVisible(true);
+    }
+
+    /** Helper: Formats table content into a clean string for text export. */
+    private String tableToText(JTable table) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < table.getColumnCount(); i++)
+            sb.append(String.format("%-25s", table.getColumnName(i)));
+        sb.append("\n");
+        for (int r = 0; r < table.getRowCount(); r++) {
+            for (int c = 0; c < table.getColumnCount(); c++)
+                sb.append(String.format("%-25s", table.getValueAt(r, c).toString()));
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    private JTable createReportTable(Object[][] data, String[] cols, DefaultTableCellRenderer headerRen) {
+        JTable t = new JTable(new javax.swing.table.DefaultTableModel(data, cols));
+        t.setRowHeight(25);
+        t.setEnabled(false);
+        t.getTableHeader().setDefaultRenderer(headerRen);
+        t.setGridColor(new Color(230, 230, 230));
+        return t;
+    }
+
+    private void addTableSection(JPanel p, String title, JTable t, int height) {
+        JLabel l = new JLabel(title);
+        l.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        l.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
+        l.setAlignmentX(Component.LEFT_ALIGNMENT);
+        p.add(l);
+        JScrollPane s = new JScrollPane(t);
+        s.setPreferredSize(new Dimension(550, height));
+        s.setMaximumSize(new Dimension(Short.MAX_VALUE, height));
+        s.setAlignmentX(Component.LEFT_ALIGNMENT);
+        p.add(s);
     }
 
     /** Creates a small coloured stat card showing a title and bold numeric value. */

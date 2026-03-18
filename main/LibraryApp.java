@@ -7,7 +7,7 @@ import utils.DataSeeder;
 import javax.swing.*;
 
 /** Main entry point for the MIVA SLCAS Library Management System. */
-public class LibraryApp {
+public class  LibraryApp {
 
     /** Application entry point. Sets look and feel and starts the application. */
     public static void main(String[] args) {

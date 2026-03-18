@@ -146,7 +146,7 @@ public class AdminPanel extends JPanel {
     /** Edits selected item with validation and password confirmation. */
     private void handleEditItem() {
         int row = table.getSelectedRow();
-        if (row == -1) { JOptionPane.showMessageDialog(this, "Select an item."); return; }
+        if (row == -1) { JOptionPane.showMessageDialog(this, "Select an item to edit."); return; }
         int    mRow = table.convertRowIndexToModel(row);
         String id   = (String) model.getValueAt(mRow, 0);
 
@@ -195,10 +195,21 @@ public class AdminPanel extends JPanel {
     /** Deletes selected item with reason selection and password confirmation. */
     private void handleDeleteItem() {
         int row = table.getSelectedRow();
-        if (row == -1) { JOptionPane.showMessageDialog(this, "Select an item."); return; }
+        if (row == -1) { JOptionPane.showMessageDialog(this, "Select an item to delete."); return; }
         int    mRow      = table.convertRowIndexToModel(row);
         String itemId    = (String) model.getValueAt(mRow, 0);
         String itemTitle = (String) model.getValueAt(mRow, 2);
+
+        // Check if copies are still out on loan
+        int totalQty = (Integer) model.getValueAt(mRow, 4);
+        int available = (Integer) model.getValueAt(mRow, 5);
+
+        if (available < totalQty) {
+            JOptionPane.showMessageDialog(this,
+                    "The item can't be deleted cos copies are still in students possession.",
+                    "Deletion Denied", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         String[]          reasons   = {"Select", "Missing", "Damaged", "Obsolete"};
         JComboBox<String> reasonBox = new JComboBox<>(reasons);

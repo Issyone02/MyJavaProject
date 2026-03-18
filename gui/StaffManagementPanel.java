@@ -72,10 +72,10 @@ public class StaffManagementPanel extends JPanel {
         passWrapper.add(eyeBtn, BorderLayout.EAST);
 
         Object[][] fields = {
-            {"Staff ID:",     idIn},
-            {"Display Name:", nickIn},
-            {"Password:",     passWrapper},
-            {"Role:",         adminCheck}
+                {"Staff ID:",     idIn},
+                {"Display Name:", nickIn},
+                {"Password:",     passWrapper},
+                {"Role:",         adminCheck}
         };
         for (int r = 0; r < fields.length; r++) {
             gbc.gridx = 0; gbc.gridy = r; gbc.weightx = 0;
@@ -127,10 +127,11 @@ public class StaffManagementPanel extends JPanel {
                 eyeBtn.setText("\u2299");
                 adminCheck.setSelected(u.isAdmin());
 
-                // Super admin: prevent role change and deletion
+                // Super admin logic: prevent role change, deletion, and password reset
                 boolean isSuperAdmin = (id == controller.getSuperAdminId());
                 adminCheck.setEnabled(!isSuperAdmin);
                 deleteBtn.setEnabled(!isSuperAdmin);
+                resetPassBtn.setEnabled(!isSuperAdmin); // Greys out reset button for System Owner
             }
         });
 
@@ -188,11 +189,18 @@ public class StaffManagementPanel extends JPanel {
             int row = table.getSelectedRow();
             if (row == -1) return;
             int    targetId = rowToIdMap.get(row);
+
+            // Extra security check in logic
+            if (targetId == controller.getSuperAdminId()) {
+                JOptionPane.showMessageDialog(this, "Cannot reset System Owner password.");
+                return;
+            }
+
             String newPass  = JOptionPane.showInputDialog(this, "Enter new password:");
             if (newPass != null && !newPass.trim().isEmpty() && confirmAdmin()) {
                 controller.resetStaffPassword(
                         String.valueOf(currentAdminId), targetId, newPass.trim());
-                JOptionPane.showMessageDialog(this, "Password reset.");
+                JOptionPane.showMessageDialog(this, "Password reset Successful!");
             }
         });
 
@@ -216,7 +224,7 @@ public class StaffManagementPanel extends JPanel {
         int r = 0;
         for (Map.Entry<Integer, UserAccount> entry : controller.getAllStaff().entrySet()) {
             rows.add(new Object[]{
-                entry.getKey(), entry.getValue().getFullName(), entry.getValue().getRole()
+                    entry.getKey(), entry.getValue().getFullName(), entry.getValue().getRole()
             });
             rowToIdMap.put(r++, entry.getKey());
         }
@@ -230,5 +238,6 @@ public class StaffManagementPanel extends JPanel {
         eyeBtn.setText("\u2299");
         adminCheck.setSelected(false); adminCheck.setEnabled(true);
         deleteBtn.setEnabled(true);
+        resetPassBtn.setEnabled(true); // Re-enable on clear
     }
 }

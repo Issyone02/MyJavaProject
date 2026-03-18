@@ -18,7 +18,7 @@ import java.util.List;
 public class BorrowPanel extends JPanel {
 
     private static final String CARD_CATALOGUE = "CATALOGUE";
-    private static final String CARD_LOANS     = "LOANS";
+    private static final String CARD_LOANS     = "BORROWED";
     private static final String CARD_WAITLIST  = "WAITLIST";
 
     private final LibraryController controller;
@@ -31,6 +31,7 @@ public class BorrowPanel extends JPanel {
 
     private final JTable            loansTable;
     private final VirtualTableModel loansModel;
+    private       TableRowSorter<VirtualTableModel> loansSorter;
 
     private final JTable            waitlistTable;
     private final VirtualTableModel waitlistModel;
@@ -51,10 +52,10 @@ public class BorrowPanel extends JPanel {
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         JPanel  viewToggle  = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         JButton catBtn      = new JButton("Catalogue");
-        JButton loansBtn    = new JButton("Active Loans");
+        JButton loansBtn    = new JButton("Active Borrowed Items");
         JButton waitlistBtn = new JButton("Waitlist");
         catBtn.setToolTipText("Browse catalogue to borrow / return");
-        loansBtn.setToolTipText("View all active loans");
+        loansBtn.setToolTipText("View all active borrowed items");
         waitlistBtn.setToolTipText("View and manage the reservation waitlist");
         viewToggle.add(catBtn); viewToggle.add(loansBtn); viewToggle.add(waitlistBtn);
         header.add(titleLabel, BorderLayout.WEST);
@@ -103,14 +104,14 @@ public class BorrowPanel extends JPanel {
         catCard.add(catActionBar, BorderLayout.SOUTH);
 
         // ── Card 2: Active Loans ──────────────────────────────────────────────
-        String[] loanCols = {"Student Name", "Student ID", "Item Title",
-                             "Type", "Borrow Date", "Due Date", "Status"};
+        String[] loanCols = {"Student Name", "Student ID", "Item ID", "Item Title",
+                "Type", "Borrow Date", "Due Date", "Status"};
         loansModel = new VirtualTableModel(loanCols);
         loansTable = new JTable(loansModel);
         loansTable.setRowHeight(26);
-        TableRowSorter<VirtualTableModel> loansSorter = new TableRowSorter<>(loansModel);
+        loansSorter = new TableRowSorter<>(loansModel);
         loansTable.setRowSorter(loansSorter);
-        loansSorter.setSortKeys(List.of(new RowSorter.SortKey(4, SortOrder.ASCENDING)));
+        loansSorter.setSortKeys(List.of(new RowSorter.SortKey(5, SortOrder.ASCENDING)));
 
         // Colour overdue rows red, deleted-item rows grey, on-time rows green
         loansTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -119,7 +120,7 @@ public class BorrowPanel extends JPanel {
                 super.getTableCellRendererComponent(t, v, sel, foc, row, col);
                 if (!sel) {
                     String status = (String) loansModel.getValueAt(
-                            t.convertRowIndexToModel(row), 6);
+                            t.convertRowIndexToModel(row), 7);
                     boolean overdue = status != null && status.startsWith("OVERDUE");
                     boolean deleted = status != null && status.startsWith("Item removed");
                     if      (deleted) { setBackground(new Color(230,230,230)); setForeground(new Color(100,100,100)); }
@@ -216,11 +217,6 @@ public class BorrowPanel extends JPanel {
 
     // ── Borrow ────────────────────────────────────────────────────────────────
 
-    /**
-     * Reads the selected item ID, asks for a student ID, and delegates to
-     * BorrowController. If the item is unavailable, offers to add the student
-     * to the waitlist.
-     */
     private void handleBorrowAction() {
         int row = catalogueTable.getSelectedRow();
         if (row == -1) { JOptionPane.showMessageDialog(this, "Please select an item."); return; }
@@ -255,11 +251,6 @@ public class BorrowPanel extends JPanel {
         }
     }
 
-    /**
-     * Returns an item selected in the Catalogue card.
-     * After the return, automatically fulfils the first matching waitlist entry
-     * if a copy is now available.
-     */
     private void handleCatalogueReturnAction() {
         int row = catalogueTable.getSelectedRow();
         if (row == -1) { JOptionPane.showMessageDialog(this, "Please select an item."); return; }
@@ -280,7 +271,6 @@ public class BorrowPanel extends JPanel {
         JOptionPane.showMessageDialog(this, "Return processed successfully.");
     }
 
-    // Asks whether to add the student to the waitlist when an item has no available copies
     private void handleWaitlistAddition(UserAccount s, LibraryItem item) {
         if (JOptionPane.showConfirmDialog(this,
                 "\"" + item.getTitle() + "\" is unavailable.\nAdd " + s.getName() + " to the waitlist?",
@@ -290,11 +280,6 @@ public class BorrowPanel extends JPanel {
         }
     }
 
-    /**
-     * Issues a waitlisted item to the selected student when copies are available.
-     * The controller handles borrow + waitlist removal as one atomic operation
-     * so a single Undo reverses both together.
-     */
     private void handleFulfillWaitlistEntry() {
         int idx = waitlistTable.getSelectedRow();
         if (idx == -1) { JOptionPane.showMessageDialog(this, "Select a waitlist entry to fulfill."); return; }
@@ -320,21 +305,13 @@ public class BorrowPanel extends JPanel {
         }
     }
 
-    // ── Return from Active Loans view ─────────────────────────────────────────
-
-    /**
-     * Uses the LoanView DTO row to look up the student and item via the controller.
-     * Column 2 (itemId) is hidden from view but available in the model for this lookup.
-     * If the item was deleted, the controller finds it via the student's loan record.
-     */
     private void handleReturnFromLoans() {
         int row = loansTable.getSelectedRow();
-        if (row == -1) { JOptionPane.showMessageDialog(this, "Select a loan to return."); return; }
+        if (row == -1) { JOptionPane.showMessageDialog(this, "Select an item to return."); return; }
         int mRow = loansTable.convertRowIndexToModel(row);
 
-        // LoanView columns: 0=studentName 1=studentId 2=itemId 3=itemTitle 4=type 5=borrowDate 6=dueDate 7=status
         String studentId = (String) loansModel.getValueAt(mRow, 1);
-        String itemId    = (String) loansModel.getValueAt(mRow, 2);   // hidden column
+        String itemId    = (String) loansModel.getValueAt(mRow, 2);
         String itemTitle = (String) loansModel.getValueAt(mRow, 3);
 
         UserAccount student = controller.findStudentById(studentId);
@@ -343,17 +320,16 @@ public class BorrowPanel extends JPanel {
         LibraryItem item        = controller.getItemById(itemId);
         boolean     inCatalogue = item != null;
 
-        // If item was deleted from catalogue, retrieve it from the student's loan record
         if (!inCatalogue) {
             item = controller.findLoanItemByTitle(studentId, itemTitle);
         }
-        if (item == null) { JOptionPane.showMessageDialog(this, "Loan record not found."); return; }
+        if (item == null) { JOptionPane.showMessageDialog(this, "Borrow record not found."); return; }
 
         final LibraryItem finalItem = item;
         String msg = inCatalogue
                 ? "Return \"" + itemTitle + "\" for " + student.getName() + "?"
                 : "\"" + itemTitle + "\" has been removed from the catalogue.\n"
-                  + "Remove this loan from " + student.getName() + "'s record?";
+                + "Remove this borrowed item from " + student.getName() + "'s record?";
 
         if (JOptionPane.showConfirmDialog(this, msg, "Confirm Return",
                 JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
@@ -368,7 +344,7 @@ public class BorrowPanel extends JPanel {
         } else {
             controller.removeOrphanedLoan(String.valueOf(currentUserId), student, finalItem);
             JOptionPane.showMessageDialog(this,
-                    "Loan record removed.\n(Item no longer exists in the catalogue.)",
+                    "Borrow record removed.\n(Item no longer exists in the catalogue.)",
                     "Removed", JOptionPane.WARNING_MESSAGE);
         }
         refreshTable();
@@ -376,37 +352,30 @@ public class BorrowPanel extends JPanel {
 
     // ── Refresh ───────────────────────────────────────────────────────────────
 
-    // Reloads all three cards from the controller
     public void refreshTable() {
         catalogueModel.setRows(GuiUtils.buildCatalogueRows(controller));
         refreshLoansTable();
         refreshWaitlistTable();
     }
 
-    /**
-     * Populates the Active Loans table from LoanView DTOs.
-     * Column 2 (itemId) is hidden by setting its width to zero — it is only
-     * used internally by handleReturnFromLoans() for the item lookup.
-     */
     private void refreshLoansTable() {
         List<Object[]> rows = new ArrayList<>();
         for (LoanView lv : controller.getActiveLoans())
             rows.add(new Object[]{
-                lv.studentName(), lv.studentId(),
-                lv.itemId(),      // index 2 — hidden, used for return lookup
-                lv.itemTitle(), lv.itemType(),
-                lv.borrowDate(), lv.dueDate(), lv.status()
+                    lv.studentName(), lv.studentId(),
+                    lv.itemId(),
+                    lv.itemTitle(), lv.itemType(),
+                    lv.borrowDate(), lv.dueDate(), lv.status()
             });
         loansModel.setRows(rows);
-        // Hide the itemId column from view
         if (loansTable.getColumnModel().getColumnCount() > 2) {
             loansTable.getColumnModel().getColumn(2).setMinWidth(0);
             loansTable.getColumnModel().getColumn(2).setMaxWidth(0);
+            loansTable.getColumnModel().getColumn(2).setPreferredWidth(0);
             loansTable.getColumnModel().getColumn(2).setWidth(0);
         }
     }
 
-    // Parses waitlist queue strings into separate display columns using WaitlistEntry
     private void refreshWaitlistTable() {
         List<Object[]> rows = new ArrayList<>();
         int pos = 1;
@@ -421,8 +390,38 @@ public class BorrowPanel extends JPanel {
         waitlistModel.setRows(rows);
     }
 
-    // Filters the Catalogue card to show only matching items; null clears the filter
-    public void applySearch(List<LibraryItem> matches) {
+    /** Filters the Catalogue card to matching items and filters Loans card by Student Name/ID or Item Title. */
+    public void applySearch(List<LibraryItem> matches, String rawQuery) {
+        // 1. Filter Catalogue using the LibraryItem list (Item-centric)
         GuiUtils.applyItemFilter(sorter, matches);
+
+        // 2. Filter Loans (Checks Student Name, Student ID, and Item matches)
+        if ((matches == null || matches.isEmpty()) && (rawQuery == null || rawQuery.isBlank())) {
+            loansSorter.setRowFilter(null);
+        } else {
+            final String query = (rawQuery != null) ? rawQuery.toLowerCase().trim() : "";
+
+            loansSorter.setRowFilter(new RowFilter<VirtualTableModel, Integer>() {
+                @Override
+                public boolean include(Entry<? extends VirtualTableModel, ? extends Integer> entry) {
+                    String name  = entry.getStringValue(0).toLowerCase();
+                    String id    = entry.getStringValue(1).toLowerCase();
+                    String title = entry.getStringValue(3).toLowerCase();
+
+                    // Include row if Student Name or Student ID matches the raw text query
+                    if (!query.isEmpty() && (name.contains(query) || id.contains(query))) {
+                        return true;
+                    }
+
+                    // Also include row if the book title in this loan matches any of the item search results
+                    if (matches != null) {
+                        for (LibraryItem m : matches) {
+                            if (title.equalsIgnoreCase(m.getTitle())) return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+        }
     }
 }
