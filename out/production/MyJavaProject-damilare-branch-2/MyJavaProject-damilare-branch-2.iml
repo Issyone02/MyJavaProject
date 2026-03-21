@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../flatlaf-3.7.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/flatlaf-3.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

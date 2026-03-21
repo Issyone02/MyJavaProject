@@ -1,0 +1,11 @@
+{
+    "java.project.referencedLibraries": [
+        "flatlaf-3.6.jar"
+    ],
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "default": true
+        }
+    ]
+}

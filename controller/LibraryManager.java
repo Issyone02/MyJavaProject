@@ -93,10 +93,6 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
      * Replaces an item's fields while keeping the borrowed-copy count intact.
      * If 2 of 5 copies are out and the admin raises total to 7, available becomes 5 (7−2).
      */
-    /**
-     * Replaces an item's fields while keeping the borrowed-copy count intact.
-     * Logic: Prevents update if new total is less than currently borrowed copies.
-     */
     @Override
     public void updateItem(String userId, String id, String type, String title,
                            String author, int year, int total, String reason) {
@@ -104,23 +100,10 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
         for (int i = 0; i < catalogue.size(); i++) {
             LibraryItem existing = catalogue.get(i);
             if (existing.getId().equals(id)) {
-
-                // 1. Calculate how many are currently out with students
                 int borrowed = existing.getTotalCopies() - existing.getAvailableCopies();
-
-                // 2. NEW LOGIC: Check if the new total is physically possible
-                if (total < borrowed) {
-                    addLog(userId, "UPDATE_DENIED", "Cannot reduce total (" + total +
-                            ") below borrowed count (" + borrowed + ") for ID: " + id);
-                    // We return early here to prevent the code below from running
-                    return;
-                }
-
-                // 3. If check passes, proceed with update
                 LibraryItem updated = buildItem(type, id, title, author, year);
                 updated.setTotalCopies(total);
-                updated.setAvailableCopies(total - borrowed); // Result will always be >= 0
-
+                updated.setAvailableCopies(Math.max(0, total - borrowed));
                 saveState(false);
                 catalogue.set(i, updated);
                 addLog(userId, "UPDATE", "Item " + id + " updated: " + reason);
@@ -174,16 +157,13 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
     // ── 5. Borrow / Return ────────────────────────────────────────────────────
 
     // saveState is called only after all validation passes — no orphan snapshots
-    /** Processes borrow request with validation and state management. */
     @Override
     public boolean borrowItem(String userId, UserAccount s, LibraryItem item) {
         if (s == null || item == null) return false;
         boolean alreadyHas = s.getCurrentLoans().stream()
                 .anyMatch(r -> r.getItem().getId().equalsIgnoreCase(item.getId().trim()));
         if (alreadyHas) { addLog(userId, "BORROW_DENIED", s.getName() + " already has " + item.getTitle()); return false; }
-        if (!(item instanceof Borrowable)) return false;
-        Borrowable b = (Borrowable) item;
-        if (!b.checkout()) { addLog(userId, "BORROW_DENIED", "No copies for " + item.getTitle()); return false; }
+        if (!item.checkout()) { addLog(userId, "BORROW_DENIED", "No copies for " + item.getTitle()); return false; }
         saveState(false);
         s.addBorrowedItem(item);
         db.recordAccess(item);
@@ -192,15 +172,11 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
         return true;
     }
 
-    /** Processes return request with validation and state management. */
     @Override
     public void returnItem(String userId, UserAccount s, LibraryItem item) {
         if (s == null || item == null) return;
         if (!s.returnItem(item)) return;
-        if (item instanceof Borrowable) {
-            Borrowable b = (Borrowable) item;
-            b.checkin();
-        }
+        item.checkin();
         saveState(false);
         addLog(userId, "RETURN", item.getTitle() + " returned by " + s.getName());
         fireChange();
@@ -212,7 +188,7 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
         if (s == null || item == null) return;
         if (!s.returnItem(item)) return;
         saveState(false);
-        addLog(userId, "REMOVE_ORPHAN_BORROWED", item.getTitle() + " (deleted) removed from " + s.getName() + "'s borrowed items");
+        addLog(userId, "REMOVE_ORPHAN_LOAN", item.getTitle() + " (deleted) removed from " + s.getName() + "'s loans");
         fireChange();
     }
 
@@ -294,16 +270,13 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
     }
 
     // Borrow + remove waitlist entry in one saveState so a single Undo reverses both
-    /** Fulfills waitlist entry with validation and atomic operations. */
     @Override
     public boolean fulfillWaitlistEntry(String userId, UserAccount student,
                                          LibraryItem item, int waitlistIdx) {
         if (student == null || item == null) return false;
         if (student.getCurrentLoans().stream()
                 .anyMatch(r -> r.getItem().getId().equalsIgnoreCase(item.getId()))) return false;
-        if (!(item instanceof Borrowable)) return false;
-        Borrowable b = (Borrowable) item;
-        if (!b.checkout()) return false;
+        if (!item.checkout()) return false;
         saveState(false);
         student.addBorrowedItem(item);
         db.recordAccess(item);
@@ -537,13 +510,11 @@ public class LibraryManager implements LibraryController, java.io.Serializable {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    /** Factory method to create appropriate LibraryItem subclass based on type. */
     private LibraryItem buildItem(String type, String id, String title, String author, int year) {
         if      (type.equalsIgnoreCase("Journal"))  return new Journal(id, title, author, year);
         else if (type.equalsIgnoreCase("Magazine")) return new Magazine(id, title, author, year);
         else                                         return new Book(id, title, author, year);
     }
 
-    /** Updates waitlist with new list of entries. */
     private void setWaitlistFrom(List<String> entries) { db.setWaitlist(new LinkedList<>(entries)); }
 }

@@ -179,20 +179,20 @@ public class MainWindow extends JFrame implements LibraryChangeListener {
         miAbout.addActionListener(e -> JOptionPane.showMessageDialog(this,
                 "Smart Library Circulation & Automation System (SLCAS)\n"
                         + "MIVA Open University\n\nDeveloped by the Following MIVA Open University School of Computing students:\n\n"
-                        + "\u2022 Mustapha Abdulafeez \u2014 2024/B/CSC/0212\n"
-                        + "\u2022 Daniel Oluwasemilore Abiodun \u2014 2024/B/SENG/0250\n"
-                        + "\u2022 Livingstone Joseph Obochi \u2014 2024/B/CYB/0320\n"
-                        + "\u2022 Dolapo Opebi Anuoluwapo \u2014 2024/B/CYB/03H\n"
-                        + "\u2022 Simon Ochayi Ujor \u2014 2024/B/CYB/0787\n"
-                        + "\u2022 Divine Okpara \u2014 2024/B/CYB/0397\n"
-                        + "\u2022 Idowu Oluwadamilare \u2014 2024/B/SENG/0291\n"
-                        + "\u2022 Olalere Isaiah Toluwani \u2014 2024/B/SENG/0830\n"
-                        + "\u2022 Folorunsho Oluwatobi \u2014 2024/B/IT/0082\n"
-                        + "\u2022 Ganiyat Jolayemi Omowunmi \u2014 2024/B/CYB/0337\n"
-                        + "\u2022 Akinniyi Adeleke Solomon \u2014 2024/B/CYB/0273\n"
-                        + "\u2022 Mujeeb Raheem \u2014 2024/B/CSC/0181\n"
-                        + "\u2022 Cherechi Udensi \u2014 2024/B/CYB/0430",
-                "About", JOptionPane.INFORMATION_MESSAGE));
+                        + "\u2022 Olalere Isaiah Toluwani \u2014 2024/B/SENG/0830 (olalere.isaiah@miva.edu.ng)\n"
+                        + "\u2022 Idowu Oluwadamilare \u2014 2024/B/SENG/0291 (idowu.oluwadamilare@miva.edu.ng)\n"
+                        + "\u2022 Mujeeb Raheem \u2014 2024/B/CSC/0181 (mujeeb.raheem@miva.edu.ng)\n"
+                        + "\u2022 Folorunsho Oluwatobi \u2014 2024/B/IT/0082 (Folorunsho.Oluwatobi@miva.edu.ng)\n"
+                        + "\u2022 Livingstone Joseph Obochi \u2014 2024/B/CYB/0320 (livingstone.obochi@miva.edu.ng)\n"
+                        + "\u2022 Akinniyi Adeleke Solomon \u2014 2024/B/CYB/0273 (adeleke.akinniyi@miva.edu.ng)\n"
+                        + "\u2022 Ganiyat Jolayemi Omowunmi \u2014 2024/B/CYB/0337 (ganiyat.jolayemi@miva.edu.ng)\n"
+                        + "\u2022 Daniel Oluwasemilore Abiodun \u2014 2024/B/SENG/0250 (daniel.abiodun1@miva.edu.ng)\n"
+                        + "\u2022 Mustapha Abdulafeez \u2014 2024/B/CSC/0212 (abdulafeez.mustapha@miva.edu.ng)\n"
+                        + "\u2022 Dolapo Opebi Anuoluwapo \u2014 2024/B/CYB/03H (Dolapo.opebi@miva.edu.ng)\n"
+                        + "\u2022 Simon Ochayi Ujor \u2014 2024/B/CYB/0787 (simon.ujor@miva.edu.ng)\n"
+                        + "\u2022 Divine Okpara \u2014 2024/B/CYB/0397 (Divine.okpara@miva.edu.ng)\n"
+                        + "\u2022 Cherechi Udensi \u2014 2024/B/CYB/0430 (cherechi.udensi@miva.edu.ng)",
+                "About SLCAS", JOptionPane.INFORMATION_MESSAGE));
         aboutMenu.add(miAbout);
 
         menuBar.add(fileMenu);

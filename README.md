@@ -12,20 +12,21 @@ A comprehensive Java desktop application for library management featuring MVC ar
   ├── LibraryItem (abstract)     — Base class for all library items
   ├── Book, Magazine, Journal    — Concrete item types
   ├── Borrowable (interface)      — Checkout/return contract
-  ├── UserAccount (abstract)      — Base for all user types
-  ├── Student, Admin, Librarian   — Role-specific accounts
+  ├── UserAccount                 — User account with role-based access and SHA-256 auth
   ├── BorrowRecord                — Individual loan tracking
   ├── LibraryDatabase            — Central data store with cache
   ├── SystemLog                  — Audit trail entries
   └── WaitlistEntry, LoanView,   — DTOs for UI display
-      StudentSummary, BorrowSummary
+      StudentSummary, BorrowSummary, OverdueLoanView
 
 /controller  — Business logic and coordination
   ├── LibraryManager            — Main controller implementing LibraryController
   ├── LibraryController (interface) — API contract for GUI
+  ├── LibraryChangeListener (interface) — Observer pattern for UI updates
   ├── BorrowController          — Borrow/return workflow handler
-  ├── SearchEngine              — Linear, binary, recursive search
-  └── AuthController            — Authentication interface
+  ├── SearchEngine              — Linear and binary search with auto-selection
+  ├── SortEngine                — Insertion Sort, Merge Sort, Quick Sort
+  └── AuthController (interface) — Authentication contract
 
 /gui         — Swing-based user interface
   ├── MainWindow                — Primary application frame
@@ -36,15 +37,14 @@ A comprehensive Java desktop application for library management featuring MVC ar
   ├── SearchSortPanel          — Advanced search interface
   ├── StaffManagementPanel     — Staff administration
   ├── LogsPanel                — System audit log viewer
-  ├── DashboardPanel           — Analytics dashboard
   ├── LoginDialog              — Secure authentication
   └── VirtualTableModel        — Lazy-loading table data model
 
 /utils       — Utility classes and helpers
   ├── FileHandler              — Binary serialization & export
   ├── IDGenerator              — Unique ID generation
-  ├── AuthManager              — SHA-256 password hashing
-  ├── LibraryConfig            — System configuration
+  ├── AuthManager              — SHA-256 password hashing & credential management
+  ├── GuiUtils                 — GUI helper methods and dialog utilities
   └── DataSeeder               — Demo data generation
 
 /main        — Application entry point
@@ -57,12 +57,14 @@ A comprehensive Java desktop application for library management featuring MVC ar
 
 ### Compile and Run
 ```bash
-javac -d out model/*.java controller/*.java gui/*.java utils/*.java main/*.java
-java -cp out main.LibraryApp
+javac -d out -cp flatlaf-3.6.jar model/*.java controller/*.java gui/*.java utils/*.java main/*.java
+java -cp out:flatlaf-3.6.jar main.LibraryApp
 ```
 
+> On Windows, use semicolons instead of colons: `-cp out;flatlaf-3.6.jar`
+
 ### Or using an IDE
-Import as a standard Java project and run `main.LibraryApp`
+Import as a standard Java project, add `flatlaf-3.6.jar` as a library dependency, and run `main.LibraryApp`
 
 ---
 
@@ -109,9 +111,10 @@ Old `.dat` files from previous versions may be incompatible due to serialization
 ### Tab Layout
 
 1. **View Items** — Catalogue table with Reports button
-   - Reports dialog includes: category distribution, most borrowed, overdue items, cache statistics
-   - Donut chart visualization
-   - Export to text file
+   - Reports dialog includes: category distribution table, most borrowed items, current overdue loans
+   - Inventory summary cards: Total Catalogue, Books, Magazines, Journals, Borrowed, Waitlist
+   - Donut chart visualization of catalogue composition
+   - Export report to text file
 
 2. **Borrow/Return** — Three-card layout:
    - **Catalogue** — Browse and borrow/return items
@@ -119,22 +122,43 @@ Old `.dat` files from previous versions may be incompatible due to serialization
    - **Waitlist** — Manage reservation queue
 
 3. **Admin** — Four sub-tabs:
-   - **Inventory** — Add, edit, delete items (admin-only edit/delete)
-   - **Students** — Manage student accounts
-   - **Staff Management** — Add/remove staff accounts
+   - **Inventory Management** — Add, edit, delete items (admin-only edit/delete)
+   - **Student Records** — Manage student accounts
+   - **Staff Management** — Add/remove staff accounts (admin-only)
    - **Logs** — System audit trail (admin-only)
 
 4. **Search & Sort** — Advanced filtering:
-   - Click column header to select field
-   - Dropdown for algorithm: Linear, Binary, Insertion Sort, Merge Sort, Quick Sort
-   - Auto-algorithm selection based on data characteristics
+   - Click column header to select the search/sort field
+   - Dropdown to choose sort algorithm: Insertion Sort, Merge Sort, Quick Sort
+   - Search auto-selects Linear or Binary based on whether data is currently sorted
 
-### File Menu
-- **Save Data** — Manual persistence trigger
-- **Export Data** — Text report or backup
-- **Import Backup** — Restore from backup file
-- **Logout** — Return to login dialog
-- **Exit** — Close application
+### Menu Bar
+
+**File**
+- **Save Data** (Ctrl+S) — Manual persistence trigger
+- **Export Data** — Text report or binary backup (password required)
+- **Import Backup** — Restore from binary backup (password required)
+- **Exit** (Ctrl+Q) — Saves and closes
+
+**Edit**
+- **Undo** (Ctrl+Z) — Reverts last operation
+- **Redo** (Ctrl+Y) — Re-applies undone operation
+
+**View**
+- Ctrl+1–4 — Jump to View Items, Borrow/Return, Admin, Search & Sort tabs
+
+**Help / About**
+- User Manual dialog with keyboard shortcut reference
+- About dialog listing the development team
+
+### Top Bar
+- **Global search field** — Searches across all tabs in real time; auto-selects Linear or Binary search and shows the algorithm used in the status bar
+- **Logout button** — Ends session and returns to login dialog
+
+### Status Bar
+- Greeting with current user's name (Good Morning / Afternoon / Evening)
+- Overdue indicator — shows count; click to open a colour-coded overdue items popup
+- Current date
 
 ---
 
@@ -142,21 +166,20 @@ Old `.dat` files from previous versions may be incompatible due to serialization
 
 ### Undo/Redo System
 - **Deep copy state management** — Complete snapshot before every operation
-- **Stack-based history** — Unlimited undo/redo levels
+- **Stack-based history** — Undo/redo using Java `Stack<LibraryState>`, capped at 50 saved states
 - **Atomic operations** — Borrow + waitlist removal handled as single undoable action
 
 ### Frequency Cache
-- **Most-accessed items tracking** — Array-based fixed-size cache (5 items)
-- **LRU eviction policy** — Least recently accessed item replaced
-- **Insertion sort ordering** — Cache maintained in descending access frequency
+- **Most-accessed items tracking** — Array-based fixed-size cache (10 items)
+- **LFU eviction policy** — When cache is full, the item with the lowest access count is replaced
+- **Insertion sort ordering** — Cache re-sorted after every access to keep highest-count item at index 0
 
 ### Search & Sort Algorithms
-- **Linear Search** — Unsorted data or single-item lookup
-- **Binary Search** — Sorted data with O(log n) performance
-- **Recursive Search** — For demonstration of recursion concepts
-- **Insertion Sort** — Small datasets, stable sort
-- **Merge Sort** — Large datasets, guaranteed O(n log n)
-- **Quick Sort** — In-place sorting with average O(n log n)
+- **Linear Search** — Used when data is unsorted; O(n)
+- **Binary Search** — Auto-selected when data is sorted; O(log n) with adjacent-match expansion
+- **Insertion Sort** — User-selectable; efficient for small datasets
+- **Merge Sort** — User-selectable; guaranteed O(n log n), stable
+- **Quick Sort** — User-selectable; in-place with median-of-three pivot, O(n log n) average
 
 ### Data Persistence
 - **Binary serialization** — Fast save/load using Java Object Serialization
@@ -169,21 +192,21 @@ Old `.dat` files from previous versions may be incompatible due to serialization
 
 ### Object-Oriented Programming
 - **Abstraction** — `LibraryItem` abstract base class with `Book`, `Magazine`, `Journal`
-- **Interface** — `Borrowable` defines checkout/return contract
-- **Polymorphism** — `LibraryController` interface with `LibraryManager` implementation
-- **Inheritance** — `UserAccount` base with `Student`, `Admin`, `Librarian` subclasses
+- **Interface** — `Borrowable` defines checkout/return contract; `LibraryController`, `AuthController`, `LibraryChangeListener` define system contracts
+- **Polymorphism** — `LibraryController` interface with `LibraryManager` implementation; items resolved via `LibraryItem` reference
+- **Inheritance** — `Book`, `Magazine`, `Journal` extend abstract `LibraryItem`
 - **Encapsulation** — Private fields with validated setters
 
 ### Data Structures
 - **ArrayList** — Catalogue storage, student lists, loan records
 - **Queue (LinkedList)** — Waitlist FIFO management
-- **Stack** — Undo/redo history (ArrayDeque)
-- **Array** — Fixed-size frequency cache (5 items)
+- **Stack** — Undo/redo history (`Stack<LibraryState>`)
+- **Array** — Fixed-size frequency cache (10 items)
 
 ### Algorithms
 - **Sorting:** Insertion Sort, Merge Sort, Quick Sort (selectable via dropdown)
-- **Searching:** Linear, Binary (any sorted field), Recursive (auto-selected)
-- **Recursion:** Recursive search, merge sort, quick sort, recursive item counting
+- **Searching:** Linear (unsorted data), Binary (auto-selected when data is sorted)
+- **Recursion:** Merge sort (recursive divide-and-conquer), quick sort (recursive partitioning), `countItemsByCategoryRecursively()` in ViewPanel (recursive list traversal for Reports)
 
 ### GUI Implementation
 - **Layout Managers:** CardLayout (BorrowPanel), GridBagLayout (forms), BorderLayout (panels), FlowLayout (toolbars)
@@ -196,7 +219,7 @@ Old `.dat` files from previous versions may be incompatible due to serialization
 - **File Chooser** — Export/import dialogs
 - **Input Validation** — Real-time field validation with error dialogs
 - **Custom Renderers** — Color-coded table rows (overdue=red, available=green, unavailable=amber)
-- **Keyboard Shortcuts** — Alt+B (borrow), Alt+R (return), Enter key form submission
+- **Keyboard Shortcuts** — Alt+B (borrow), Alt+R (return), Ctrl+S (save), Ctrl+Q (exit), Ctrl+Z/Y (undo/redo), Ctrl+1–4 (switch tabs)
 
 ### Persistence & Reporting
 - **Binary Serialization** — All data persisted via Java Object Serialization
@@ -218,7 +241,7 @@ Old `.dat` files from previous versions may be incompatible due to serialization
 - `LibraryManager.fireChange()` notifies all registered listeners
 
 ### DTO Pattern
-- `LoanView`, `StudentSummary`, `BorrowSummary` — Read-only data transfer for UI
+- `LoanView`, `StudentSummary`, `BorrowSummary`, `OverdueLoanView`, `WaitlistEntry` — Read-only data transfer for UI
 - Separation of presentation data from domain models
 
 ### Strategy Pattern

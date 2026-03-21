@@ -1,0 +1,177 @@
+@startuml SLCAS_Class_Hierarchy
+
+!pragma layout smetana
+
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classHeaderBackgroundColor #E8F4FD
+skinparam interfaceBackgroundColor #FFF8E1
+skinparam abstractClassBackgroundColor #F3E5F5
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam ArrowColor #444444
+skinparam classBorderColor #888888
+
+' ──────────────────────────────────────────
+'  INTERFACES
+' ──────────────────────────────────────────
+
+interface Borrowable {
+    +checkout() : boolean
+    +checkin() : void
+    +isAvailable() : boolean
+}
+
+interface LibraryController {
+    +addItem(item) : void
+    +removeItem(id) : void
+    +editItem(id, updated) : void
+    +borrowItem(studentId, itemId) : BorrowStatus
+    +returnItem(studentId, itemId) : void
+    +addToWaitlist(studentId, itemId) : void
+    +removeFromWaitlist(itemId) : void
+    +undo() : void
+    +redo() : void
+    +search(query) : SearchResult
+    +sortCatalogue(field, algorithm) : void
+    +getReports() : ReportData
+}
+
+interface LibraryChangeListener {
+    +onLibraryDataChanged() : void
+}
+
+interface AuthController {
+    +validate(userId, password) : boolean
+    +getFullName(userId) : String
+    +logFailedAttempt(userId) : void
+}
+
+' ──────────────────────────────────────────
+'  MODEL LAYER
+' ──────────────────────────────────────────
+
+abstract class LibraryItem {
+    - id : String
+    - title : String
+    - author : String
+    - year : int
+    - totalCopies : int
+    - availableCopies : int
+    + {abstract} getType() : String
+    + checkout() : boolean
+    + checkin() : void
+    + isAvailable() : boolean
+    + setYear(year) : void
+    + setTotalCopies(n) : void
+}
+
+class Book {
+    + getType() : String
+}
+
+class Magazine {
+    + getType() : String
+}
+
+class Journal {
+    + getType() : String
+}
+
+class UserAccount {
+    - userId : int
+    - name : String
+    - role : String
+    - passwordHash : String
+    - currentLoans : List<BorrowRecord>
+    - borrowHistory : List<BorrowRecord>
+}
+
+class BorrowRecord {
+    - itemId : String
+    - studentId : int
+    - borrowDate : LocalDate
+    - dueDate : LocalDate
+    + isOverdue() : boolean
+    + getDaysOverdue() : long
+}
+
+class LibraryDatabase {
+    - catalogue : ArrayList<LibraryItem>
+    - members : ArrayList<UserAccount>
+    - waitlist : Queue<String>
+    - accessCache : LibraryItem[10]
+    - accessCount : int[10]
+    + recordAccess(itemId) : void
+    + sortCacheDescending() : void
+}
+
+' ──────────────────────────────────────────
+'  CONTROLLER LAYER
+' ──────────────────────────────────────────
+
+class LibraryManager {
+    - undoHistory : Stack<LibraryState>
+    - redoHistory : Stack<LibraryState>
+    - database : LibraryDatabase
+    - listeners : List<LibraryChangeListener>
+    + saveState() : void
+    + fireChange() : void
+}
+
+class BorrowController {
+    - database : LibraryDatabase
+    + processBorrow(studentId, itemId) : BorrowStatus
+    + processReturn(studentId, itemId) : void
+    + fulfilFirstWaitlistEntry(itemId) : void
+}
+
+class SearchEngine {
+    + searchAll(query, catalogue) : SearchResult
+    + detectSortedField(catalogue) : String
+}
+
+class SortEngine {
+    + mergeSort(list, field) : void
+    + insertionSort(list, field) : void
+    + quickSort(list, field) : void
+}
+
+' ──────────────────────────────────────────
+'  UTILS LAYER
+' ──────────────────────────────────────────
+
+class AuthManager <<Singleton>> {
+    - instance : AuthManager
+    - staff : HashMap<Integer, UserAccount>
+    + getInstance() : AuthManager
+    + validate(userId, password) : boolean
+    + logFailedAttempt(userId) : void
+}
+
+' ──────────────────────────────────────────
+'  RELATIONSHIPS
+' ──────────────────────────────────────────
+
+' Interface implementations
+LibraryItem     ..|>  Borrowable           : implements
+LibraryManager  ..|>  LibraryController    : implements
+AuthManager     ..|>  AuthController       : implements
+
+' Inheritance
+Book            --|>  LibraryItem          : extends
+Magazine        --|>  LibraryItem          : extends
+Journal         --|>  LibraryItem          : extends
+
+' Composition (LibraryManager owns and manages these)
+LibraryManager  *--   LibraryDatabase      : contains
+LibraryManager  *--   BorrowController     : uses
+LibraryManager  *--   SearchEngine         : uses
+LibraryManager  *--   SortEngine           : uses
+
+' Aggregation (database stores these)
+LibraryDatabase o--   LibraryItem          : stores
+LibraryDatabase o--   UserAccount          : stores
+UserAccount     o--   BorrowRecord         : tracks
+
+@enduml

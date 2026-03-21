@@ -3,7 +3,6 @@ package gui;
 import controller.LibraryController;
 import utils.GuiUtils;
 
-
 import model.LibraryItem;
 import javax.swing.*;
 import javax.swing.table.TableRowSorter;
@@ -45,11 +44,11 @@ public class AdminPanel extends JPanel {
         totalIn = new JTextField();
 
         Object[][] rows = {
-            {"Type:",     typeBox},
-            {"Title:",    titleIn},
-            {"Author:",   authIn},
-            {"Year:",     yearIn},
-            {"Quantity:", totalIn}
+                {"Type:",     typeBox},
+                {"Title:",    titleIn},
+                {"Author:",   authIn},
+                {"Year:",     yearIn},
+                {"Quantity:", totalIn}
         };
         for (int r = 0; r < rows.length; r++) {
             gbc.gridx = 0; gbc.gridy = r; gbc.weightx = 0;
@@ -134,10 +133,10 @@ public class AdminPanel extends JPanel {
             refreshTable();
             titleIn.setText(""); authIn.setText(""); yearIn.setText(""); totalIn.setText("");
             JOptionPane.showMessageDialog(this, "Item added. ID: " + id,
-                                          "Success", JOptionPane.INFORMATION_MESSAGE);
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(),
-                                          "Error", JOptionPane.ERROR_MESSAGE);
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -163,9 +162,9 @@ public class AdminPanel extends JPanel {
         typeEdit.setSelectedItem(item.getType());
 
         Object[] msg = {
-            "ID: " + id, "Currently borrowed: " + borrowed,
-            "Title:", tEdit, "Author:", aEdit, "Year:", yEdit,
-            "Type:", typeEdit, "Quantity:", qEdit
+                "ID: " + id, "Currently borrowed: " + borrowed,
+                "Title:", tEdit, "Author:", aEdit, "Year:", yEdit,
+                "Type:", typeEdit, "Quantity:", qEdit
         };
         if (JOptionPane.showConfirmDialog(this, msg, "Edit Item", JOptionPane.OK_CANCEL_OPTION)
                 == JOptionPane.OK_OPTION) {
@@ -195,38 +194,112 @@ public class AdminPanel extends JPanel {
     /** Deletes selected item with reason selection and password confirmation. */
     private void handleDeleteItem() {
         int row = table.getSelectedRow();
-        if (row == -1) { JOptionPane.showMessageDialog(this, "Select an item to delete."); return; }
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Select an item to delete.");
+            return;
+        }
+
         int    mRow      = table.convertRowIndexToModel(row);
         String itemId    = (String) model.getValueAt(mRow, 0);
         String itemTitle = (String) model.getValueAt(mRow, 2);
 
-        // Check if copies are still out on loan
-        int totalQty = (Integer) model.getValueAt(mRow, 4);
-        int available = (Integer) model.getValueAt(mRow, 5);
+        // --- Obtain authoritative total/available counts ---
+        // Prefer reading from the controller's inventory (source of truth).
+        Integer totalQty = null;
+        Integer available = null;
 
-        if (available < totalQty) {
+        LibraryItem item = controller.getInventory().stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findFirst().orElse(null);
+
+        if (item != null) {
+            // Use the LibraryItem getters when available
+            totalQty  = item.getTotalCopies();
+            available = item.getAvailableCopies();
+        } else {
+            // Fallback: attempt to read from the table model (columns may vary)
+            // Column indices here assume the model stores Available at 5 and Total at 6.
+            // We parse defensively and handle parsing errors gracefully.
+            try {
+                Object totalObj = model.getValueAt(mRow, 6); // NOTE: GuiUtils.CATALOGUE_COLUMNS uses index 6 for Total
+                Object availObj = model.getValueAt(mRow, 5); // and index 5 for Available
+
+                // Defensive checks: getValueAt may return "" for missing cells; treat that as invalid.
+                if (totalObj == null || "".equals(totalObj.toString().trim())
+                        || availObj == null || "".equals(availObj.toString().trim())) {
+                    JOptionPane.showMessageDialog(this,
+                            "Unable to determine item quantities from the table. Deletion aborted.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Remove non-digit characters just in case and parse
+                String totalStr = totalObj.toString().replaceAll("[^0-9-]", "");
+                String availStr = availObj.toString().replaceAll("[^0-9-]", "");
+
+                totalQty  = Integer.parseInt(totalStr);
+                available = Integer.parseInt(availStr);
+            } catch (NumberFormatException ex) {
+                // If parsing fails, show an error and abort deletion to avoid accidental removal.
+                JOptionPane.showMessageDialog(this,
+                        "Unable to determine item quantities. Deletion aborted.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                // If model columns are not as expected, abort and ask admin to refresh.
+                JOptionPane.showMessageDialog(this,
+                        "Table model does not contain quantity columns. Please refresh and try again.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        // If we still couldn't determine counts, abort.
+        if (totalQty == null || available == null) {
             JOptionPane.showMessageDialog(this,
-                    "The item can't be deleted cos copies are still in students possession.",
+                    "Could not determine total/available counts for this item. Deletion aborted.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // --- Deletion policy: only allow deletion when ALL copies are present ---
+        // Deny deletion if any copy is missing (i.e., available != total).
+        if (!available.equals(totalQty)) {
+            int missing = totalQty - available;
+            JOptionPane.showMessageDialog(this,
+                    "The item '" + itemTitle + "' cannot be deleted because " + missing +
+                            " copy/copies are currently not in the library.",
                     "Deletion Denied", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // Proceed to ask for deletion reason and confirm
         String[]          reasons   = {"Select", "Missing", "Damaged", "Obsolete"};
         JComboBox<String> reasonBox = new JComboBox<>(reasons);
-        Object[]          message   = {"Item: " + itemTitle, "Reason:", reasonBox};
+        Object[]          message   = {
+                "Item: " + itemTitle,
+                "All copies are currently in the library.",
+                "Select Deletion Reason:",
+                reasonBox
+        };
 
-        if (JOptionPane.showConfirmDialog(this, message, "Delete Item", JOptionPane.OK_CANCEL_OPTION)
+        if (JOptionPane.showConfirmDialog(this, message, "Confirm Item Deletion", JOptionPane.OK_CANCEL_OPTION)
                 == JOptionPane.OK_OPTION) {
+
             String reason = (String) reasonBox.getSelectedItem();
-            if ("Select".equals(reason)) {
-                JOptionPane.showMessageDialog(this, "Please select a deletion reason.");
+            if ("Select".equals(reason) || reason == null) {
+                JOptionPane.showMessageDialog(this, "Please select a valid deletion reason.");
                 return;
             }
+
+            // Final password confirmation before deletion
             if (confirmPassword()) {
                 boolean removed = controller.removeItem(itemId, String.valueOf(currentUserId), reason);
                 if (removed) {
                     refreshTable();
-                    JOptionPane.showMessageDialog(this, "Item removed.");
+                    JOptionPane.showMessageDialog(this, "Item successfully removed from the database.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Database error: Could not remove item.");
                 }
             }
         }
