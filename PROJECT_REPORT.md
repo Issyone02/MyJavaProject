@@ -33,6 +33,7 @@ The codebase follows a strict **MVC** structure across five packages. The `model
 
 All four OOP pillars are applied meaningfully. **Abstraction**: `LibraryItem` forces every subtype to implement `getType()` whilst sharing validation and borrow logic. **Inheritance**: `Book`, `Magazine`, and `Journal` extend `LibraryItem` without duplication. **Polymorphism**: all screens operate through `LibraryController`; all catalogue operations use `LibraryItem` references. **Encapsulation**: private fields with validated setters reject invalid years, blank titles, and negative copy counts. **Composition**: `LibraryDatabase` holds all five data structures as fields; `UserAccount` composes two `BorrowRecord` lists. Four interfaces define layer contracts: `LibraryController` (30 operations), `LibraryChangeListener` (Observer pattern), `Borrowable` (checkout/return), and `AuthController` (authentication).
 
+[![](CLASS_HIERARCHY_UML_DIAGRAM.png)
 ---
 
 ## 2. Features
