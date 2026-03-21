@@ -41,18 +41,27 @@ classDiagram
 
     class LibraryController {
         <<interface>>
-        +addItem(item) void
-        +removeItem(id) void
-        +editItem(id, updated) void
-        +borrowItem(studentId, itemId) BorrowStatus
-        +returnItem(studentId, itemId) void
-        +addToWaitlist(studentId, itemId) void
-        +removeFromWaitlist(itemId) void
-        +undo() void
-        +redo() void
-        +search(query) SearchResult
-        +sortCatalogue(field, algorithm) void
-        +getReports() ReportData
+        +addChangeListener(l) void
+        +removeChangeListener(l) void
+        +createItem(type, title, author, year, total, userId) String
+        +addItem(item, userId) void
+        +removeItem(id, userId, reason) boolean
+        +updateItem(userId, id, type, title, author, year, total, reason) void
+        +borrowItem(userId, student, item) boolean
+        +returnItem(userId, student, item) void
+        +addToWaitlist(userId, student, item) void
+        +fulfillWaitlistEntry(userId, student, item, idx) boolean
+        +insertionSortBy(field) void
+        +mergeSortBy(field) void
+        +quickSortBy(field) void
+        +undo(userName) void
+        +redo(userName) void
+        +saveState(isUndoOrRedo) void
+        +getActiveLoans() List
+        +getOverdueLoans() List
+        +getStudentSummaries() List
+        +getBorrowSummary() BorrowSummary
+        +getSystemLogs() List
     }
 
     class LibraryChangeListener {
@@ -62,9 +71,9 @@ classDiagram
 
     class AuthController {
         <<interface>>
-        +validate(userId, password) boolean
-        +getFullName(userId) String
-        +logFailedAttempt(userId) void
+        +validate(int userId, String password) boolean
+        +getFullName(int userId) String
+        +logFailedAttempt(String attemptedId) void
     }
 
     %% ── MODEL: item hierarchy ───────────────────────────────────────────────
@@ -83,6 +92,7 @@ classDiagram
         +isAvailable() boolean
         +setYear(year) void
         +setTotalCopies(n) void
+        +setAvailableCopies(n) void
     }
 
     class Book {
@@ -105,54 +115,143 @@ classDiagram
         -waitlist Queue
         -accessCache LibraryItem[]
         -accessCount int[]
-        +recordAccess(itemId) void
-        +sortCacheDescending() void
+        +addItem(item) void
+        +removeItem(id) boolean
+        +findItemById(id) LibraryItem
+        +addMember(student) boolean
+        +removeMember(studentId) void
+        +findMemberById(id) UserAccount
+        +enqueueWaitlist(entry) void
+        +recordAccess(item) void
+        +getMostAccessedItems() List
     }
 
     class UserAccount {
-        -userId int
-        -name String
-        -role String
+        -accountId String
+        -fullName String
         -passwordHash String
+        -role String
         -currentLoans List
-        -borrowHistory List
+        -history List
+        +checkPassword(raw) boolean
+        +isAdmin() boolean
+        +addBorrowedItem(item) void
+        +returnItem(item) boolean
+        +changePassword(newRaw) void
     }
 
     class BorrowRecord {
-        -itemId String
-        -studentId int
+        -item LibraryItem
         -borrowDate LocalDate
         -dueDate LocalDate
+        -returnDate LocalDate
         +isOverdue() boolean
         +getDaysOverdue() long
+        +getDaysRemaining() long
+        +setReturnDate(d) void
+    }
+
+    class WaitlistEntry {
+        <<record>>
+        studentName String
+        studentId String
+        itemTitle String
+        +format() String
+        +parse(raw) WaitlistEntry
+    }
+
+    class SystemLog {
+        -userId String
+        -timestamp String
+        -action String
+        -details String
+        +getUserId() String
+        +getTimestamp() String
+        +getAction() String
+        +getDetails() String
+    }
+
+    %% ── MODEL: DTOs (read-only views returned to GUI) ───────────────────────
+
+    class LoanView {
+        <<record>>
+        studentName String
+        studentId String
+        itemTitle String
+        itemType String
+        borrowDate String
+        dueDate String
+        status String
+    }
+
+    class OverdueLoanView {
+        <<record>>
+        studentName String
+        studentId String
+        itemTitle String
+        itemType String
+        dueDate String
+        daysOverdue long
+    }
+
+    class StudentSummary {
+        <<record>>
+        studentId String
+        name String
+        loanCount int
+        itemTitles String
+        dueDates String
+        hasOverdue boolean
+    }
+
+    class BorrowSummary {
+        bookTitles int
+        magTitles int
+        journalTitles int
+        bookCopies int
+        magCopies int
+        journalCopies int
+        totalCopies int
+        borrowedCount int
+        waitlistCount int
+        mostBorrowedLines List
+        overdueLines List
     }
 
     %% ── CONTROLLER ──────────────────────────────────────────────────────────
 
     class LibraryManager {
+        -db LibraryDatabase
         -undoHistory Stack
         -redoHistory Stack
-        -database LibraryDatabase
-        -listeners List
-        +saveState() void
+        -changeListeners List
+        -systemLogs List
+        +saveState(isUndoOrRedo) void
+        +undo(userName) void
+        +redo(userName) void
         +fireChange() void
+        +addLog(userId, action, details) void
+        +borrowItem(userId, student, item) boolean
+        +returnItem(userId, student, item) void
     }
 
     class BorrowController {
-        -database LibraryDatabase
-        +processBorrow(studentId, itemId) BorrowStatus
-        +processReturn(studentId, itemId) void
-        +fulfilFirstWaitlistEntry(itemId) void
+        -controller LibraryController
+        +processBorrow(operatorId, studentId, itemId) BorrowStatus
+        +addToWaitlist(operatorId, student, item) void
+        +fulfilFirstWaitlistEntry(operatorId, item) WaitlistResult
     }
 
     class SearchEngine {
-        +searchAll(query, catalogue) SearchResult
-        +detectSortedField(catalogue) String
+        <<static utility>>
+        +searchAll(items, query) SearchResult
+        +detectSortedField(items) String
     }
 
     class SortEngine {
-        +mergeSort(list, field) void
+        <<static utility>>
         +insertionSort(list, field) void
+        +mergeSort(list, field) void
         +quickSort(list, field) void
     }
 
@@ -161,18 +260,70 @@ classDiagram
     class AuthManager {
         <<Singleton>>
         -instance AuthManager
-        -staff HashMap
+        -users HashMap
         +getInstance() AuthManager
         +validate(userId, password) boolean
         +getFullName(userId) String
-        +logFailedAttempt(userId) void
+        +logFailedAttempt(attemptedId) void
+        +addUser(id, pass, name, isAdmin) void
+        +removeUser(id) void
+        +isAdmin(id) boolean
+    }
+
+    class FileHandler {
+        <<static utility>>
+        +saveAll(items, students, waitlist) void
+        +loadData() List
+        +loadStudents() List
+        +loadWaitlist() Queue
+        +exportToText(items, students, dest) boolean
+        +exportBackup(items, students, dest) boolean
+        +importBackup(source) Object[]
+        +logStealthActivity(message) void
+    }
+
+    class DataSeeder {
+        <<static utility>>
+        +seedIfEmpty() boolean
+    }
+
+    %% ── STARTUP ─────────────────────────────────────────────────────────────
+
+    class LibraryApp {
+        <<main>>
+        +main(args) void
+        +startApp() void
+    }
+
+    %% ── GUI ─────────────────────────────────────────────────────────────────
+
+    class LoginDialog {
+        <<JDialog>>
+        -auth AuthController
+        -succeeded boolean
+        -loggedInUserId int
+        +isSucceeded() boolean
+        +getLoggedInUserId() int
+    }
+
+    class MainWindow {
+        <<JFrame>>
+        -controller LibraryController
+        -viewPanel ViewPanel
+        -adminPanel AdminPanel
+        -borrowPanel BorrowPanel
+        -studentPanel StudentPanel
+        -searchSortPanel SearchSortPanel
+        -staffPanel StaffManagementPanel
+        -logsPanel LogsPanel
+        +onLibraryDataChanged() void
     }
 
     %% ── INTERFACE IMPLEMENTATIONS ───────────────────────────────────────────
 
     Borrowable <|.. LibraryItem
     LibraryController <|.. LibraryManager
-    LibraryChangeListener <|.. LibraryManager
+    LibraryChangeListener <|.. MainWindow
     AuthController <|.. AuthManager
 
     %% ── INHERITANCE ─────────────────────────────────────────────────────────
@@ -184,23 +335,44 @@ classDiagram
     %% ── COMPOSITION ─────────────────────────────────────────────────────────
 
     LibraryManager *-- LibraryDatabase
-    LibraryManager *-- BorrowController
-    LibraryManager *-- SearchEngine
-    LibraryManager *-- SortEngine
+    LibraryManager ..> SearchEngine
+    LibraryManager ..> SortEngine
 
     %% ── AGGREGATION ─────────────────────────────────────────────────────────
 
     LibraryDatabase o-- LibraryItem
     LibraryDatabase o-- UserAccount
     UserAccount o-- BorrowRecord
+    LibraryManager o-- SystemLog
 
-    %% ── LEGEND & NOTES (unlinked — ELK places as separate cluster) ──────────
+    %% ── ASSOCIATIONS / DEPENDENCIES ─────────────────────────────────────────
+
+    BorrowController --> LibraryController
+    LibraryManager --> FileHandler
+    AuthManager --> FileHandler
+    LibraryManager ..> WaitlistEntry
+    BorrowController ..> WaitlistEntry
+    DataSeeder --> FileHandler
+    LibraryApp ..> AuthManager
+    LibraryApp ..> DataSeeder
+    LibraryApp ..> LoginDialog
+    LibraryApp ..> MainWindow
+
+    %% ── DTO DEPENDENCIES (LibraryManager creates and returns these) ──────────
+
+    LibraryManager ..> LoanView
+    LibraryManager ..> OverdueLoanView
+    LibraryManager ..> StudentSummary
+    LibraryManager ..> BorrowSummary
+
+    %% ── LEGEND & ABOUT (unlinked — ELK places as separate cluster) ──────────
 
     class LEGEND["LEGEND"] {
         dotted line  : implements an interface
         solid line   : extends a parent class
         filled ◆     : owns the other — shares its lifecycle
         hollow ◇     : holds a reference only
+        dashed arrow : depends on / creates
         + public     : accessible from anywhere
         - private    : accessible within the class only
     }
@@ -222,4 +394,3 @@ classDiagram
         Only one instance exists throughout the application
         to ensure all authentication goes through one place
     }
-
