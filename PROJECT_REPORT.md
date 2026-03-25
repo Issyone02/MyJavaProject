@@ -1,4 +1,4 @@
-# SLCAS — Smart Library Circulation & Automation System
+# SLCAS - Smart Library Circulation & Automation System
 ## Project Report | COS 202 | MIVA Open University
 
 ## Source Code
