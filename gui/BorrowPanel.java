@@ -1,377 +1,427 @@
 package gui;
 
+import controller.LibraryController;
+import utils.GuiUtils;
+
+import controller.BorrowController;
+
 import model.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * BorrowPanel - Manages book borrowing and return transactions
- *
- * This panel serves as the main interface for processing library loans and returns.
- * It provides functionality for:
- * - Borrowing items from the library inventory
- * - Returning borrowed items
- * - Managing waitlists for unavailable items
- * - Automatic waitlist processing when items are returned
- *
- * Key features:
- * - Duplicate loan prevention (students can't borrow same item twice)
- * - Automatic waitlist notification and assignment
- * - Real-time inventory availability updates
- * - Student validation before transactions
- */
+/** Borrow, return, and waitlist panel — three CardLayout cards. */
 public class BorrowPanel extends JPanel {
-    // Core components
-    private final LibraryManager manager;          // Business logic controller
-    private final int currentUserId;               // Current user for audit logging
-    private final JTable table;                    // Displays inventory items
-    private final DefaultTableModel model;         // Table data model
-    private TableRowSorter<DefaultTableModel> sorter;  // For filtering/searching
 
-    /**
-     * Constructor - Initializes the borrow/return panel
-     *
-     * Sets up the UI with:
-     * - Inventory table showing all items
-     * - Borrow and Return action buttons
-     * - Search/filter capability
-     *
-     * @param manager Library manager for data operations
-     * @param userId  Current user ID for transaction logging
-     */
-    public BorrowPanel(LibraryManager manager, int userId) {
-        this.manager = manager;
-        this.currentUserId = userId;
-        setLayout(new BorderLayout(15, 15));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    private static final String CARD_CATALOGUE = "CATALOGUE";
+    private static final String CARD_LOANS     = "BORROWED";
+    private static final String CARD_WAITLIST  = "WAITLIST";
 
-        // ==================== TABLE SETUP ====================
-        // Define table columns for inventory display
-        String[] columns = {"ID", "Type", "Title", "Author", "Year", "Available", "Total"};
+    private final LibraryController controller;
+    private final BorrowController  borrowController;
+    private final int               currentUserId;
 
-        // Create non-editable table model (read-only display)
-        model = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int r, int c) {
-                return false;  // Prevent direct editing
+    private final JTable            catalogueTable;
+    private final VirtualTableModel catalogueModel;
+    private       TableRowSorter<VirtualTableModel> sorter;
+
+    private final JTable            loansTable;
+    private final VirtualTableModel loansModel;
+    private       TableRowSorter<VirtualTableModel> loansSorter;
+
+    private final JTable            waitlistTable;
+    private final VirtualTableModel waitlistModel;
+
+    private final CardLayout cardLayout;
+    private final JPanel     cardPanel;
+
+    public BorrowPanel(LibraryController controller, int userId) {
+        this.controller       = controller;
+        this.borrowController = new BorrowController(controller);
+        this.currentUserId    = userId;
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        // ── Header ────────────────────────────────────────────────────────────
+        JPanel  header      = new JPanel(new BorderLayout());
+        JLabel  titleLabel  = new JLabel("Catalogue");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        JPanel  viewToggle  = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        JButton catBtn      = new JButton("Catalogue");
+        JButton loansBtn    = new JButton("Active Borrowed Items");
+        JButton waitlistBtn = new JButton("Waitlist");
+        catBtn.setToolTipText("Browse catalogue to borrow / return");
+        loansBtn.setToolTipText("View all active borrowed items");
+        waitlistBtn.setToolTipText("View and manage the reservation waitlist");
+        viewToggle.add(catBtn); viewToggle.add(loansBtn); viewToggle.add(waitlistBtn);
+        header.add(titleLabel, BorderLayout.WEST);
+        header.add(viewToggle, BorderLayout.EAST);
+        add(header, BorderLayout.NORTH);
+
+        cardLayout = new CardLayout();
+        cardPanel  = new JPanel(cardLayout);
+
+        // ── Card 1: Catalogue ─────────────────────────────────────────────────
+        String[] catCols = GuiUtils.CATALOGUE_COLUMNS;
+        catalogueModel = new VirtualTableModel(catCols);
+        catalogueTable = new JTable(catalogueModel);
+        sorter         = new TableRowSorter<>(catalogueModel);
+        catalogueTable.setRowSorter(sorter);
+        catalogueTable.setRowHeight(26);
+
+        // Rows with no available copies are highlighted amber
+        catalogueTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override public Component getTableCellRendererComponent(
+                    JTable t, Object v, boolean sel, boolean foc, int row, int col) {
+                super.getTableCellRendererComponent(t, v, sel, foc, row, col);
+                if (!sel) {
+                    int avail = (Integer) catalogueModel.getValueAt(
+                            t.convertRowIndexToModel(row), 5);
+                    if (avail == 0) { setBackground(new Color(255,243,205)); setForeground(new Color(130,80,0)); }
+                    else            { setBackground(row%2==0?Color.WHITE:new Color(248,248,248)); setForeground(Color.BLACK); }
+                }
+                return this;
             }
-        };
+        });
 
-        // Initialize table with sorting capability
-        table = new JTable(model);
-        sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
+        JPanel  catActionBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 8));
+        JButton borrowBtn    = new JButton("Borrow Selected");
+        JButton returnBtn    = new JButton("Return Selected");
+        borrowBtn.setToolTipText("Borrow the selected item for a student (Alt+B)");
+        returnBtn.setToolTipText("Return the selected item from a student (Alt+R)");
+        borrowBtn.setMnemonic(KeyEvent.VK_B);
+        returnBtn.setMnemonic(KeyEvent.VK_R);
+        borrowBtn.setPreferredSize(new Dimension(180, 36));
+        returnBtn.setPreferredSize(new Dimension(180, 36));
+        catActionBar.add(borrowBtn); catActionBar.add(returnBtn);
 
-        // ==================== ACTION BUTTONS ====================
-        // Panel containing borrow and return buttons
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        JPanel catCard = new JPanel(new BorderLayout(5, 5));
+        catCard.add(new JScrollPane(catalogueTable), BorderLayout.CENTER);
+        catCard.add(catActionBar, BorderLayout.SOUTH);
 
-        // Create large, prominent buttons for main actions
-        JButton borrowBtn = new JButton("Borrow Selected Item");
-        JButton returnBtn = new JButton("Return Selected Item");
-        borrowBtn.setPreferredSize(new Dimension(220, 45));  // Large button size
-        returnBtn.setPreferredSize(new Dimension(220, 45));
+        // ── Card 2: Active Loans ──────────────────────────────────────────────
+        String[] loanCols = {"Student Name", "Student ID", "Item ID", "Item Title",
+                "Type", "Borrow Date", "Due Date", "Status"};
+        loansModel = new VirtualTableModel(loanCols);
+        loansTable = new JTable(loansModel);
+        loansTable.setRowHeight(26);
+        loansSorter = new TableRowSorter<>(loansModel);
+        loansTable.setRowSorter(loansSorter);
+        loansSorter.setSortKeys(List.of(new RowSorter.SortKey(5, SortOrder.ASCENDING)));
 
-        // Add buttons to panel
-        buttonPanel.add(borrowBtn);
-        buttonPanel.add(returnBtn);
+        // Colour overdue rows red, deleted-item rows grey, on-time rows green
+        loansTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override public Component getTableCellRendererComponent(
+                    JTable t, Object v, boolean sel, boolean foc, int row, int col) {
+                super.getTableCellRendererComponent(t, v, sel, foc, row, col);
+                if (!sel) {
+                    String status = (String) loansModel.getValueAt(
+                            t.convertRowIndexToModel(row), 7);
+                    boolean overdue = status != null && status.startsWith("OVERDUE");
+                    boolean deleted = status != null && status.startsWith("Item removed");
+                    if      (deleted) { setBackground(new Color(230,230,230)); setForeground(new Color(100,100,100)); }
+                    else if (overdue) { setBackground(new Color(255,220,220)); setForeground(new Color(150,0,0)); }
+                    else              { setBackground(row%2==0?Color.WHITE:new Color(240,255,240)); setForeground(new Color(0,100,0)); }
+                }
+                return this;
+            }
+        });
 
-        // ==================== LAYOUT ASSEMBLY ====================
-        add(new JScrollPane(table), BorderLayout.CENTER);  // Table in center
-        add(buttonPanel, BorderLayout.SOUTH);              // Buttons at bottom
+        JPanel  loansActionBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 8));
+        JButton loansReturnBtn = new JButton("Return Selected");
+        loansReturnBtn.setToolTipText("Return the selected loan");
+        loansReturnBtn.setPreferredSize(new Dimension(180, 36));
+        loansActionBar.add(loansReturnBtn);
+        loansReturnBtn.addActionListener(e -> handleReturnFromLoans());
 
-        // ==================== EVENT LISTENERS ====================
-        // Attach handlers to buttons
+        JPanel loansCard = new JPanel(new BorderLayout(5, 5));
+        loansCard.add(new JScrollPane(loansTable), BorderLayout.CENTER);
+        loansCard.add(loansActionBar, BorderLayout.SOUTH);
+
+        // ── Card 3: Waitlist ──────────────────────────────────────────────────
+        String[] waitCols = {"No.", "Student Name", "Student ID", "Requested Item"};
+        waitlistModel = new VirtualTableModel(waitCols);
+        waitlistTable = new JTable(waitlistModel);
+        waitlistTable.setRowHeight(26);
+        waitlistTable.setAutoCreateRowSorter(true);
+
+        waitlistTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override public Component getTableCellRendererComponent(
+                    JTable t, Object v, boolean sel, boolean foc, int row, int col) {
+                super.getTableCellRendererComponent(t, v, sel, foc, row, col);
+                if (!sel) { setBackground(row%2==0?Color.WHITE:new Color(245,240,255)); setForeground(new Color(80,50,120)); }
+                return this;
+            }
+        });
+
+        JPanel  waitActionBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
+        JButton moveUpBtn     = new JButton("\u2191 Up");
+        JButton moveDownBtn   = new JButton("\u2193 Down");
+        JButton fulfillBtn    = new JButton("Fulfill");
+        JButton removeWaitBtn = new JButton("Remove");
+        fulfillBtn.setBackground(new Color(70,160,70)); fulfillBtn.setForeground(Color.WHITE);
+        fulfillBtn.setOpaque(true); fulfillBtn.setBorderPainted(false);
+        fulfillBtn.setToolTipText("Issue the requested item to the selected student if copies are available");
+
+        moveUpBtn.addActionListener(e -> {
+            int idx = waitlistTable.getSelectedRow();
+            if (idx > 0) { controller.moveWaitlistEntry(String.valueOf(currentUserId), idx, true); refreshWaitlistTable(); }
+        });
+        moveDownBtn.addActionListener(e -> {
+            int idx = waitlistTable.getSelectedRow();
+            if (idx != -1 && idx < controller.getWaitlist().size()-1) {
+                controller.moveWaitlistEntry(String.valueOf(currentUserId), idx, false); refreshWaitlistTable();
+            }
+        });
+        fulfillBtn.addActionListener(e    -> handleFulfillWaitlistEntry());
+        removeWaitBtn.addActionListener(e -> {
+            int idx = waitlistTable.getSelectedRow();
+            if (idx != -1) { controller.removeWaitlistEntry(String.valueOf(currentUserId), idx); refreshWaitlistTable(); }
+        });
+
+        waitActionBar.add(moveUpBtn); waitActionBar.add(moveDownBtn);
+        waitActionBar.add(fulfillBtn); waitActionBar.add(removeWaitBtn);
+
+        JPanel waitCard = new JPanel(new BorderLayout(5, 5));
+        waitCard.add(new JScrollPane(waitlistTable), BorderLayout.CENTER);
+        waitCard.add(waitActionBar, BorderLayout.SOUTH);
+
+        cardPanel.add(catCard,    CARD_CATALOGUE);
+        cardPanel.add(loansCard,  CARD_LOANS);
+        cardPanel.add(waitCard,   CARD_WAITLIST);
+        add(cardPanel, BorderLayout.CENTER);
+
+        catBtn.addActionListener(e -> {
+            titleLabel.setText("Catalogue");
+            cardLayout.show(cardPanel, CARD_CATALOGUE);
+        });
+        loansBtn.addActionListener(e -> {
+            titleLabel.setText("Active Loans");
+            refreshLoansTable();
+            cardLayout.show(cardPanel, CARD_LOANS);
+        });
+        waitlistBtn.addActionListener(e -> {
+            titleLabel.setText("Waitlist");
+            refreshWaitlistTable();
+            cardLayout.show(cardPanel, CARD_WAITLIST);
+        });
         borrowBtn.addActionListener(e -> handleBorrowAction());
-        returnBtn.addActionListener(e -> handleReturnAction());
+        returnBtn.addActionListener(e -> handleCatalogueReturnAction());
 
-        // Load initial inventory data
         refreshTable();
     }
 
-    /**
-     * Handles the borrow transaction workflow
-     *
-     * Process flow:
-     * 1. Validate item selection
-     * 2. Request student ID
-     * 3. Validate student exists
-     * 4. Check item availability
-     * 5. Verify student doesn't already have this item (duplicate prevention)
-     * 6. Process loan or add to waitlist
-     *
-     * Business rules:
-     * - Item must be selected
-     * - Student must be registered
-     * - Student cannot borrow same item twice (duplicate loan prevention)
-     * - If unavailable, offer waitlist option
-     */
+    // ── Borrow ────────────────────────────────────────────────────────────────
+
     private void handleBorrowAction() {
-        // Step 1: Validate item selection
-        int row = table.getSelectedRow();
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Please select an item to borrow.");
-            return;
-        }
+        int row = catalogueTable.getSelectedRow();
+        if (row == -1) { JOptionPane.showMessageDialog(this, "Please select an item."); return; }
+        String itemId = (String) catalogueModel.getValueAt(catalogueTable.convertRowIndexToModel(row), 0);
+        String sId    = JOptionPane.showInputDialog(this, "Enter Student ID:");
+        if (sId == null || sId.isBlank()) return;
 
-        // Convert view index to model index (handles sorting)
-        int mRow = table.convertRowIndexToModel(row);
-        String itemId = (String) model.getValueAt(mRow, 0);
-
-        // Find the actual item object in inventory
-        LibraryItem item = manager.getInventory().stream()
-                .filter(i -> i.getId().equals(itemId))
-                .findFirst()
-                .orElse(null);
-
-        // Step 2: Request student ID from user
-        String sId = JOptionPane.showInputDialog(this, "Enter Student ID borrowing this Item:");
-
-        // Step 3: Validate student ID was provided
-        if (sId == null || sId.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please type in a Student's ID.");
-            return;
-        }
-
-        // Step 4: Find student in system
-        Student student = manager.findStudentById(sId.trim());
-        if (student == null) {
-            // Student not found - must be registered first
-            JOptionPane.showMessageDialog(this,
-                    "This Student is not found. Please register student first.");
-            return;
-        }
-
-        // Step 5: Check item availability
-        if (item != null && item.getAvailableCopies() > 0) {
-            // Item is available - attempt to borrow
-            // manager.borrowItem returns false if student already has this item
-            boolean success = manager.borrowItem(String.valueOf(currentUserId), student, item);
-
-            if (success) {
-                // Borrow successful - item wasn't already borrowed by this student
-                JOptionPane.showMessageDialog(this, "Item borrow was Successful!");
-                refreshTable();  // Update display to show new availability
-            } else {
-                // Borrow denied - duplicate loan prevention triggered
-                // Student already has a copy of this specific item
-                JOptionPane.showMessageDialog(this,
-                        "Access Denied: " + student.getName() +
-                                ". You already have this item in your possession!\n" +
-                                "You must return this Item first before you can borrow again.",
-                        "Duplicate Loan Error",
-                        JOptionPane.ERROR_MESSAGE);
+        BorrowController.BorrowStatus status =
+                borrowController.processBorrow(String.valueOf(currentUserId), sId.trim(), itemId);
+        switch (status) {
+            case STUDENT_NOT_FOUND:
+                JOptionPane.showMessageDialog(this, "Student not found.");
+                break;
+            case ITEM_NOT_FOUND:
+                JOptionPane.showMessageDialog(this, "Item not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                break;
+            case DUPLICATE_LOAN:
+                JOptionPane.showMessageDialog(this, "Student already has this item.", "Duplicate", JOptionPane.ERROR_MESSAGE);
+                break;
+            case ITEM_UNAVAILABLE: {
+                LibraryItem item    = controller.getItemById(itemId);
+                UserAccount student = controller.findStudentById(sId.trim());
+                if (item != null && student != null) handleWaitlistAddition(student, item);
+                break;
             }
-        } else if (item != null) {
-            // Item exists but no copies available - offer waitlist
-            handleWaitlistAddition(student, item);
+            case SUCCESS:
+                JOptionPane.showMessageDialog(this, "Borrow successful!");
+                refreshTable();
+                break;
+            default:
+                break;
         }
     }
 
-    /**
-     * Handles the return transaction workflow
-     *
-     * Process flow:
-     * 1. Validate item selection
-     * 2. Request student ID
-     * 3. Validate student exists
-     * 4. Process return transaction
-     * 5. Check and process waitlist if applicable
-     *
-     * Important: After a successful return, the system automatically checks
-     * if anyone is waiting for this item and offers to assign it to them.
-     */
-    private void handleReturnAction() {
-        // Step 1: Validate item selection
-        int row = table.getSelectedRow();
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Please select an item to return.");
+    private void handleCatalogueReturnAction() {
+        int row = catalogueTable.getSelectedRow();
+        if (row == -1) { JOptionPane.showMessageDialog(this, "Please select an item."); return; }
+        String      itemId  = (String) catalogueModel.getValueAt(catalogueTable.convertRowIndexToModel(row), 0);
+        LibraryItem item    = controller.getItemById(itemId);
+        if (item == null) return;
+        String      sId     = JOptionPane.showInputDialog(this, "Enter Student ID:");
+        if (sId == null || sId.isBlank()) return;
+        UserAccount student = controller.findStudentById(sId.trim());
+        if (student == null) { JOptionPane.showMessageDialog(this, "Student not found."); return; }
+
+        controller.returnItem(String.valueOf(currentUserId), student, item);
+        BorrowController.WaitlistResult result =
+                borrowController.fulfilFirstWaitlistEntry(String.valueOf(currentUserId), item);
+        if (result.entry != null && result.success && result.student != null)
+            JOptionPane.showMessageDialog(this, "Assigned to " + result.student.getName() + " from waitlist.");
+        refreshTable();
+        JOptionPane.showMessageDialog(this, "Return processed successfully.");
+    }
+
+    private void handleWaitlistAddition(UserAccount s, LibraryItem item) {
+        if (JOptionPane.showConfirmDialog(this,
+                "\"" + item.getTitle() + "\" is unavailable.\nAdd " + s.getName() + " to the waitlist?",
+                "Waitlist", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            borrowController.addToWaitlist(String.valueOf(currentUserId), s, item);
+            JOptionPane.showMessageDialog(this, s.getName() + " added to the waitlist.");
+        }
+    }
+
+    private void handleFulfillWaitlistEntry() {
+        int idx = waitlistTable.getSelectedRow();
+        if (idx == -1) { JOptionPane.showMessageDialog(this, "Select a waitlist entry to fulfill."); return; }
+
+        String raw = new ArrayList<>(controller.getWaitlist()).get(idx);
+        WaitlistEntry we = WaitlistEntry.parse(raw);
+        if (we == null) { JOptionPane.showMessageDialog(this, "Could not read waitlist entry."); return; }
+
+        UserAccount student = controller.findStudentById(we.studentId());
+        LibraryItem item    = controller.getInventory().stream()
+                .filter(i -> i.getTitle().equalsIgnoreCase(we.itemTitle()))
+                .findFirst().orElse(null);
+
+        if (student == null || item == null) { JOptionPane.showMessageDialog(this, "Student or item not found."); return; }
+        if (item.getAvailableCopies() <= 0) {
+            JOptionPane.showMessageDialog(this, "No available copies. Student remains on waitlist.",
+                    "Unavailable", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        // Get item details from table
-        int mRow = table.convertRowIndexToModel(row);
-        String itemId = (String) model.getValueAt(mRow, 0);
-        LibraryItem item = manager.getInventory().stream()
-                .filter(i -> i.getId().equals(itemId))
-                .findFirst()
-                .orElse(null);
-
-        // Step 2: Request student ID
-        String sId = JOptionPane.showInputDialog(this, "Enter Student ID returning this item:");
-
-        // Step 3: Validate student ID provided
-        if (sId == null) {
-            JOptionPane.showMessageDialog(this,
-                    "This Student is not found. Please register student first.");
-            return;
-        }
-
-        // Find student in system
-        Student student = manager.findStudentById(sId.trim());
-
-        // Step 4: Process return if both student and item are valid
-        if (student != null && item != null) {
-            // Execute the return transaction
-            manager.returnItem(String.valueOf(currentUserId), student, item);
-
-            // Step 5: Automatically check waitlist for this item
-            // This ensures fair first-come-first-served distribution
-            processWaitlist(item);
-
-            // Update display to show new availability
+        if (controller.fulfillWaitlistEntry(String.valueOf(currentUserId), student, item, idx)) {
             refreshTable();
+            JOptionPane.showMessageDialog(this, "\"" + item.getTitle() + "\" issued to " + student.getName() + ".");
         }
     }
 
-    /**
-     * Processes waitlist for a newly returned item
-     *
-     * When an item is returned, this method:
-     * 1. Checks if anyone is waiting for this specific item
-     * 2. Finds the first person in the waitlist queue
-     * 3. Offers to immediately assign the item to them
-     * 4. Validates they don't already have a copy (duplicate prevention)
-     * 5. Completes the transaction if accepted
-     *
-     * This ensures fair "first-come-first-served" waitlist management.
-     *
-     * @param item The item that was just returned and is now available
-     */
-    private void processWaitlist(LibraryItem item) {
-        // Build search string for this item in waitlist format
-        // Format is: "Student Name (ID) -> Item Title"
-        String target = "-> " + item.getTitle();
+    private void handleReturnFromLoans() {
+        int row = loansTable.getSelectedRow();
+        if (row == -1) { JOptionPane.showMessageDialog(this, "Select an item to return."); return; }
+        int mRow = loansTable.convertRowIndexToModel(row);
 
-        // Get LIVE waitlist to ensure we have current data
-        // (Important: don't use stale cached data)
-        java.util.List<String> currentWaitlist = manager.getWaitlist();
+        String studentId = (String) loansModel.getValueAt(mRow, 1);
+        String itemId    = (String) loansModel.getValueAt(mRow, 2);
+        String itemTitle = (String) loansModel.getValueAt(mRow, 3);
 
-        // Find first student waiting for this specific item
-        String nextStudentEntry = currentWaitlist.stream()
-                .filter(entry -> entry.contains(target))
-                .findFirst()
-                .orElse(null);
+        UserAccount student = controller.findStudentById(studentId);
+        if (student == null) { JOptionPane.showMessageDialog(this, "Student not found."); return; }
 
-        // If someone is waiting, offer to assign the item to them
-        if (nextStudentEntry != null) {
-            int choice = JOptionPane.showConfirmDialog(this,
-                    "Waitlist Alert!\n" + nextStudentEntry +
-                            "\nDo you want to assign this Item to the student on queue now?",
-                    "Waitlist Management",
-                    JOptionPane.YES_NO_OPTION);
+        LibraryItem item        = controller.getItemById(itemId);
+        boolean     inCatalogue = item != null;
 
-            if (choice == JOptionPane.YES_OPTION) {
-                try {
-                    // Extract Student ID from waitlist entry
-                    // Format is: "Name (ID) -> Title"
-                    // We extract the ID from between the parentheses
-                    String id = nextStudentEntry.substring(
-                            nextStudentEntry.indexOf("(") + 1,
-                            nextStudentEntry.indexOf(")"));
+        if (!inCatalogue) {
+            item = controller.findLoanItemByTitle(studentId, itemTitle);
+        }
+        if (item == null) { JOptionPane.showMessageDialog(this, "Borrow record not found."); return; }
 
-                    Student s = manager.findStudentById(id);
+        final LibraryItem finalItem = item;
+        String msg = inCatalogue
+                ? "Return \"" + itemTitle + "\" for " + student.getName() + "?"
+                : "\"" + itemTitle + "\" has been removed from the catalogue.\n"
+                + "Remove this borrowed item from " + student.getName() + "'s record?";
 
-                    if (s != null) {
-                        // Attempt to borrow for the waitlist student
-                        // Returns false if they already have this item
-                        boolean success = manager.borrowItem(
-                                String.valueOf(currentUserId), s, item);
+        if (JOptionPane.showConfirmDialog(this, msg, "Confirm Return",
+                JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
 
-                        if (success) {
-                            // Transaction successful - remove from waitlist
-                            manager.removeWaitlistEntry(
-                                    String.valueOf(currentUserId),
-                                    currentWaitlist.indexOf(nextStudentEntry));
+        if (inCatalogue) {
+            controller.returnItem(String.valueOf(currentUserId), student, finalItem);
+            BorrowController.WaitlistResult result =
+                    borrowController.fulfilFirstWaitlistEntry(String.valueOf(currentUserId), finalItem);
+            if (result.entry != null && result.success && result.student != null)
+                JOptionPane.showMessageDialog(this, "Assigned to " + result.student.getName() + " from waitlist.");
+            JOptionPane.showMessageDialog(this, "Return processed successfully.");
+        } else {
+            controller.removeOrphanedLoan(String.valueOf(currentUserId), student, finalItem);
+            JOptionPane.showMessageDialog(this,
+                    "Borrow record removed.\n(Item no longer exists in the catalogue.)",
+                    "Removed", JOptionPane.WARNING_MESSAGE);
+        }
+        refreshTable();
+    }
 
-                            JOptionPane.showMessageDialog(this,
-                                    "Waitlist fulfilled successfully.");
-                        } else {
-                            // Student already has this item - skip and notify
-                            // This shouldn't normally happen but good to handle
-                            JOptionPane.showMessageDialog(this,
-                                    "Cannot fulfill waitlist: " + s.getName() +
-                                            " already has a copy of this item.",
-                                    "Waitlist Skipped",
-                                    JOptionPane.WARNING_MESSAGE);
+    // ── Refresh ───────────────────────────────────────────────────────────────
+
+    public void refreshTable() {
+        catalogueModel.setRows(GuiUtils.buildCatalogueRows(controller));
+        refreshLoansTable();
+        refreshWaitlistTable();
+    }
+
+    private void refreshLoansTable() {
+        List<Object[]> rows = new ArrayList<>();
+        for (LoanView lv : controller.getActiveLoans())
+            rows.add(new Object[]{
+                    lv.studentName(), lv.studentId(),
+                    lv.itemId(),
+                    lv.itemTitle(), lv.itemType(),
+                    lv.borrowDate(), lv.dueDate(), lv.status()
+            });
+        loansModel.setRows(rows);
+        if (loansTable.getColumnModel().getColumnCount() > 2) {
+            loansTable.getColumnModel().getColumn(2).setMinWidth(0);
+            loansTable.getColumnModel().getColumn(2).setMaxWidth(0);
+            loansTable.getColumnModel().getColumn(2).setPreferredWidth(0);
+            loansTable.getColumnModel().getColumn(2).setWidth(0);
+        }
+    }
+
+    private void refreshWaitlistTable() {
+        List<Object[]> rows = new ArrayList<>();
+        int pos = 1;
+        for (String raw : controller.getWaitlist()) {
+            WaitlistEntry we = WaitlistEntry.parse(raw);
+            if (we != null) {
+                rows.add(new Object[]{pos++, we.studentName(), we.studentId(), we.itemTitle()});
+            } else {
+                rows.add(new Object[]{pos++, "Unknown", "", raw});
+            }
+        }
+        waitlistModel.setRows(rows);
+    }
+
+    /** Filters the Catalogue card to matching items and filters Loans card by Student Name/ID or Item Title. */
+    public void applySearch(List<LibraryItem> matches, String rawQuery) {
+        // 1. Filter Catalogue using the LibraryItem list (Item-centric)
+        GuiUtils.applyItemFilter(sorter, matches);
+
+        // 2. Filter Loans (Checks Student Name, Student ID, and Item matches)
+        if ((matches == null || matches.isEmpty()) && (rawQuery == null || rawQuery.isBlank())) {
+            loansSorter.setRowFilter(null);
+        } else {
+            final String query = (rawQuery != null) ? rawQuery.toLowerCase().trim() : "";
+
+            loansSorter.setRowFilter(new RowFilter<VirtualTableModel, Integer>() {
+                @Override
+                public boolean include(Entry<? extends VirtualTableModel, ? extends Integer> entry) {
+                    String name  = entry.getStringValue(0).toLowerCase();
+                    String id    = entry.getStringValue(1).toLowerCase();
+                    String title = entry.getStringValue(3).toLowerCase();
+
+                    // Include row if Student Name or Student ID matches the raw text query
+                    if (!query.isEmpty() && (name.contains(query) || id.contains(query))) {
+                        return true;
+                    }
+
+                    // Also include row if the book title in this loan matches any of the item search results
+                    if (matches != null) {
+                        for (LibraryItem m : matches) {
+                            if (title.equalsIgnoreCase(m.getTitle())) return true;
                         }
                     }
-                } catch (Exception e) {
-                    // Handle any parsing errors from waitlist entry format
-                    JOptionPane.showMessageDialog(this,
-                            "Error during auto-assign: " + e.getMessage());
+                    return false;
                 }
-            }
-        }
-    }
-
-    /**
-     * Handles adding a student to the waitlist
-     *
-     * Called when a student tries to borrow an item that has no available copies.
-     * Offers to add them to a queue so they can be notified when it becomes available.
-     *
-     * @param s    Student requesting the item
-     * @param item Item they want to borrow
-     */
-    private void handleWaitlistAddition(Student s, LibraryItem item) {
-        // Confirm with user before adding to waitlist
-        if (JOptionPane.showConfirmDialog(this,
-                "This Item is Unavailable right Now. " +
-                        "Do you want to add this student to waitlist Queue?",
-                "Waitlist",
-                JOptionPane.YES_NO_OPTION) == 0) {
-
-            // Add student to waitlist for this item
-            manager.addToWaitlist(String.valueOf(currentUserId), s, item);
-
-            // Confirm addition
-            JOptionPane.showMessageDialog(this,
-                    "This Student: " + s.getName() + " has been added to waitlist.");
-        }
-    }
-
-    /**
-     * Refreshes the inventory table with current data
-     *
-     * Clears all existing rows and reloads from the library manager.
-     * Shows current availability for all items.
-     * Called after any transaction that changes inventory state.
-     */
-    public void refreshTable() {
-        // Clear existing data
-        model.setRowCount(0);
-
-        // Add a row for each inventory item
-        for (LibraryItem i : manager.getInventory()) {
-            model.addRow(new Object[]{
-                    i.getId(),                  // Item ID
-                    i.getType(),                // Type (Book/Magazine/Journal)
-                    i.getTitle(),               // Title
-                    i.getAuthor(),              // Author
-                    i.getYear(),                // Publication year
-                    i.getAvailableCopies(),     // Currently available
-                    i.getTotalCopies()          // Total owned
             });
-        }
-    }
-
-    /**
-     * Applies search filter to the inventory table
-     *
-     * Called by global search in MainWindow when user types in search box.
-     * Filters table rows in real-time based on search text.
-     *
-     * @param text Search text to filter by (case-insensitive)
-     */
-    public void applyFilter(String text) {
-        if (sorter != null) {
-            // Apply case-insensitive regex filter
-            // (?i) makes the regex case-insensitive
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
         }
     }
 }

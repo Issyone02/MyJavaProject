@@ -4,39 +4,26 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * SystemLog - Records audit trail entry
- *
- * Captures who did what and when for accountability.
- * Used for system audit log and security tracking.
- */
+/** Immutable audit log entry. */
 public class SystemLog implements Serializable {
     private static final long serialVersionUID = 1L;
+    private final String userId, timestamp, action, details;
 
-    private final String userId;      // Who performed the action
-    private final String timestamp;   // When it happened
-    private final String action;      // What action (BORROW, RETURN, DELETE, etc.)
-    private final String details;     // Additional details
-
-    /**
-     * Creates a new log entry with current timestamp
-     *
-     * @param userId  User performing the action
-     * @param action  Action type
-     * @param details Additional information
-     */
+    /** Creates a system log entry with current timestamp. */
     public SystemLog(String userId, String action, String details) {
-        this.userId = userId;
-        this.action = action;
-        this.details = details;
-        // Capture exact moment with formatted timestamp
-        this.timestamp = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.userId    = userId; this.action = action; this.details = details;
+        this.timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
-    // Getters (no setters - immutable log entry)
-    public String getUserId() { return userId; }
+    /** Returns the user ID who performed the action. */
+    public String getUserId()    { return userId; }
+    
+    /** Returns the timestamp when the log entry was created. */
     public String getTimestamp() { return timestamp; }
-    public String getAction() { return action; }
-    public String getDetails() { return details; }
+    
+    /** Returns the action type (e.g., BORROW, RETURN, ADD, DELETE). */
+    public String getAction()    { return action; }
+    
+    /** Returns detailed description of the action. */
+    public String getDetails()   { return details; }
 }

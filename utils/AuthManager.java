@@ -1,71 +1,65 @@
 package utils;
 
+import controller.AuthController;
+import model.UserAccount;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.*;
 
-/**
- * AuthManager - Handles user authentication and authorization
- *
- * Manages:
- * - User accounts (login credentials)
- * - User roles (Admin vs Staff)
- * - Password validation
- * - User database persistence
- *
- * Default admin account: ID=30114413, Password="Ol@l3r3"
- */
-public class AuthManager {
+/** Staff authentication and account management. Singleton. */
+public class AuthManager implements AuthController {
 
-    /**
-     * User - Represents a system user account
-     */
-    public static class User implements Serializable {
-        private static final long serialVersionUID = 1L;
-        public String password;    // User password
-        public String nickname;    // Display name
-        public boolean isSuper;    // Admin privileges flag
+    public static final int SUPER_ADMIN_ID = 30114413;
 
-        public User(String password, String nickname, boolean isSuper) {
-            this.password = password;
-            this.nickname = nickname;
-            this.isSuper = isSuper;
-        }
+    private static final String USER_FILE = "system_users.dat";
+    private static Map<Integer, UserAccount> users = new HashMap<>();
+    private static final AuthManager INSTANCE = new AuthManager();
+
+    private AuthManager() {}
+
+    public static AuthManager getInstance() { return INSTANCE; }
+
+    // ── AuthController ────────────────────────────────────────────────────────
+
+    @Override
+    public boolean validate(int userId, String rawPassword) {
+        UserAccount u = users.get(userId);
+        return u != null && u.checkPassword(rawPassword);
     }
 
-    private static Map<Integer, User> users = new HashMap<>();  // User database
-    public static final int SUPER_ADMIN_ID = 30114413;          // System owner ID
-    private static final String USER_FILE = "system_users.dat"; // Storage file
+    @Override
+    public String getFullName(int userId) {
+        UserAccount u = users.get(userId);
+        return u != null ? u.getFullName() : "Unknown User";
+    }
 
-    /**
-     * Loads user accounts from disk
-     * Creates default admin if no users exist
-     */
+    @Override
+    public void logFailedAttempt(String attemptedId) {
+        FileHandler.logStealthActivity("FAILED LOGIN ATTEMPT for ID: " + attemptedId);
+    }
+
+    // ── Startup ───────────────────────────────────────────────────────────────
+
+    /** Call once at startup. Creates a default admin if no user file exists. */
     public static void loadUsers() {
         File file = new File(USER_FILE);
-        if (!file.exists()) {
-            // Create default admin account
-            users.put(SUPER_ADMIN_ID, new User("Ol@l3r3", "System Owner", true));
-            saveToDisk();
-            return;
-        }
-
-        // Load existing users
+        if (!file.exists()) { createDefaultAdmin(); saveToDisk(); return; }
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             Object raw = ois.readObject();
             if (raw instanceof Map) {
-                users = (Map<Integer, User>) raw;
+                @SuppressWarnings("unchecked")
+                Map<Integer, UserAccount> loaded = (Map<Integer, UserAccount>) raw;
+                users = loaded;
             }
         } catch (Exception e) {
-            // Fallback to default admin
-            users.put(SUPER_ADMIN_ID, new User("Ol@l3r3", "System Owner", true));
+            users = new HashMap<>();
+            createDefaultAdmin();
+            saveToDisk();
         }
     }
 
-    /**
-     * Saves user database to disk
-     */
-    private static synchronized void saveToDisk() {
+    public static synchronized void saveToDisk() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(USER_FILE))) {
             oos.writeObject(users);
         } catch (IOException e) {
@@ -73,99 +67,46 @@ public class AuthManager {
         }
     }
 
-    /**
-     * Updates a user's role (Admin/Staff)
-     * System owner role cannot be changed
-     */
-    public static void updateUserRole(int id, boolean isSuper) {
-        if (id == SUPER_ADMIN_ID) return;  // Protect system owner
-        if (users.containsKey(id)) {
-            users.get(id).isSuper = isSuper;
-            saveToDisk();
+    private static void createDefaultAdmin() {
+        users.put(SUPER_ADMIN_ID, new UserAccount(String.valueOf(SUPER_ADMIN_ID), "System Owner", "Ol@l3r3", "Admin"));
+    }
+
+    // ── Staff CRUD (called only by LibraryManager) ────────────────────────────
+
+    public static boolean validateStatic(int id, String rawPassword) {
+        UserAccount u = users.get(id);
+        return u != null && u.checkPassword(rawPassword);
+    }
+
+    public static boolean isUserExists(int id)  { return users.containsKey(id); }
+    public static boolean isAdmin(int id)        { UserAccount u = users.get(id); return u != null && u.isAdmin(); }
+
+    /** Creates or updates a staff account. Pass null for rawPass to keep the existing password. */
+    public static void addUser(int id, String rawPass, String fullName, boolean isAdminRole) {
+        if (id == SUPER_ADMIN_ID) {
+            UserAccount existing = users.get(id);
+            if (existing != null) {
+                existing.setFullName(fullName);
+                if (rawPass != null && !rawPass.isBlank()) existing.changePassword(rawPass);
+                saveToDisk();
+                return;
+            }
         }
-    }
-
-    /**
-     * Validates login credentials
-     * @return true if ID and password match
-     */
-    public static boolean validate(int id, String password) {
-        return users.containsKey(id) && users.get(id).password.equals(password);
-    }
-
-    /**
-     * Checks if user ID exists
-     */
-    public static boolean isUserExists(int id) {
-        return users.containsKey(id);
-    }
-
-    /**
-     * Gets user's display name
-     */
-    public static String getNickname(int id) {
-        return users.containsKey(id) ? users.get(id).nickname : "Unknown User";
-    }
-
-    /**
-     * Gets full user details with role
-     */
-    public static String getUserFullDetails(int id) {
-        if (!users.containsKey(id)) return "Unknown";
-        User u = users.get(id);
-        return u.nickname + " (" + (u.isSuper ? "Admin" : "Librarian") + ")";
-    }
-
-    /**
-     * Checks if user has admin privileges
-     */
-    public static boolean isSuperAdmin(int id) {
-        return users.containsKey(id) && users.get(id).isSuper;
-    }
-
-    /**
-     * Adds a new user account
-     */
-    public static void addUser(int id, String password, String nickname, boolean isSuper) {
-        users.put(id, new User(password, nickname, isSuper));
+        String role = isAdminRole ? "Admin" : "Librarian";
+        users.put(id, new UserAccount(String.valueOf(id), fullName, rawPass, role));
         saveToDisk();
     }
 
-    /**
-     * Changes a user's password
-     */
-    public static void changePassword(int id, String newPassword) {
-        if (users.containsKey(id)) {
-            users.get(id).password = newPassword;
-            saveToDisk();
-        }
+    public static void resetUserPassword(int targetId, String newRawPassword) {
+        UserAccount u = users.get(targetId);
+        if (u != null) { u.changePassword(newRawPassword); saveToDisk(); }
     }
 
-    /**
-     * Resets a user's password to a specific value
-     * Used by System Owner for recovery
-     */
-    public static void resetUserPassword(int targetId, String newPassword) {
-        if (users.containsKey(targetId)) {
-            users.get(targetId).password = newPassword;
-            saveToDisk();
-        }
-    }
+    public static Map<Integer, UserAccount> getAllUsers() { return users; }
 
-    /**
-     * Deletes a user account
-     * System owner cannot be deleted
-     */
     public static void removeUser(int id) {
-        if (id == SUPER_ADMIN_ID) return;  // Protect system owner
+        if (id == SUPER_ADMIN_ID) return;
         users.remove(id);
         saveToDisk();
-    }
-
-    /**
-     * Gets all users (for user management interface)
-     */
-    public static Map<Integer, User> getAllUsers() {
-        return users;
     }
 }

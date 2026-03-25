@@ -2,205 +2,119 @@ package utils;
 
 import model.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * FileHandler - Manages all file I/O operations
- *
- * Handles:
- * - Saving/loading library inventory (.dat files)
- * - Saving/loading student records
- * - Saving/loading waitlist
- * - Export/import functionality
- * - Theme preference storage
- * - Background activity logging
- *
- * All data is persisted using Java serialization for easy object storage.
- */
+/** All file I/O: inventory, students, waitlist, and audit log. Uses Java serialisation. */
 public class FileHandler {
-    // File paths for persistent storage
-    private static final String DATA_FILE = "inventory.dat";
-    private static final String STUDENT_FILE = "students.dat";
+    private static final String DATA_FILE     = "inventory.dat";
+    private static final String STUDENT_FILE  = "students.dat";
     private static final String WAITLIST_FILE = "waitlist.dat";
-    private static final String CONFIG_FILE = "config.txt";
-    private static final String STEALTH_LOG = "sys_debug_core.log";
+    private static final String STEALTH_LOG   = "sys_debug_core.log";
 
-    /**
-     * Saves all library data in one operation
-     * Called by LibraryManager.saveState()
-     */
-    public static void saveAll(List<LibraryItem> items, List<Student> students, List<String> waitlist) {
-        saveData(items);
-        saveStudents(students);
-        saveWaitlist(waitlist);
+    /** Saves all data files: inventory, students, and waitlist. */
+    public static void saveAll(List<LibraryItem> items, List<UserAccount> students, Queue<String> waitlist) {
+        saveData(items); saveStudents(students); saveWaitlist(waitlist);
     }
 
-    /**
-     * Logs system activity to background file with timestamp
-     * Used for audit trail and debugging
-     */
+    /** Logs system activity with timestamp to stealth log file. */
     public static void logStealthActivity(String message) {
         try (PrintWriter out = new PrintWriter(new FileWriter(STEALTH_LOG, true))) {
-            String timestamp = LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            out.println("[" + timestamp + "] " + message);
-            out.flush();
-        } catch (IOException e) {
-            // Fail silently - logging should not crash the app
-        }
+            out.println("[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "] " + message);
+        } catch (IOException e) { /* never crash the app on log failure */ }
     }
 
-    // ==================== INVENTORY PERSISTENCE ====================
-
-    /** Saves inventory to disk */
-    public static void saveData(List<LibraryItem> items) {
+    /** Saves inventory items to binary file using Java serialization. */
+    private static void saveData(List<LibraryItem> items) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
             out.writeObject(new ArrayList<>(items));
-        } catch (IOException e) {
-            logStealthActivity("ERR: Inventory save failed - " + e.getMessage());
-        }
+        } catch (IOException e) { logStealthActivity("ERR: Inventory save failed - " + e.getMessage()); }
     }
 
-    /** Loads inventory from disk */
+    /** Loads inventory items from binary file. Returns empty list if file doesn't exist or is corrupt. */
+    @SuppressWarnings("unchecked")
     public static List<LibraryItem> loadData() {
-        File file = new File(DATA_FILE);
-        if (!file.exists()) return new ArrayList<>();  // Empty if no file
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+        File f = new File(DATA_FILE);
+        if (!f.exists()) return new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(f))) {
             return (List<LibraryItem>) in.readObject();
-        } catch (Exception e) {
-            return new ArrayList<>();  // Return empty on error
-        }
+        } catch (Exception e) { return new ArrayList<>(); }
     }
 
-    // ==================== STUDENT PERSISTENCE ====================
-
-    /** Saves student records to disk */
-    public static void saveStudents(List<Student> students) {
+    /** Saves student accounts to binary file using Java serialization. */
+    private static void saveStudents(List<UserAccount> students) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(STUDENT_FILE))) {
             out.writeObject(new ArrayList<>(students));
-        } catch (IOException e) {
-            logStealthActivity("ERR: Student save failed - " + e.getMessage());
-        }
+        } catch (IOException e) { logStealthActivity("ERR: Student save failed - " + e.getMessage()); }
     }
 
-    /** Loads student records from disk */
-    public static List<Student> loadStudents() {
-        File file = new File(STUDENT_FILE);
-        if (!file.exists()) return new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            return (List<Student>) in.readObject();
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
+    /** Loads student accounts from binary file. Returns empty list if file doesn't exist or is corrupt. */
+    @SuppressWarnings("unchecked")
+    public static List<UserAccount> loadStudents() {
+        File f = new File(STUDENT_FILE);
+        if (!f.exists()) return new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(f))) {
+            return (List<UserAccount>) in.readObject();
+        } catch (Exception e) { return new ArrayList<>(); }
     }
 
-    // ==================== EXPORT FUNCTIONALITY ====================
+    /** Saves waitlist queue to binary file using Java serialization. */
+    private static void saveWaitlist(Queue<String> waitlist) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(WAITLIST_FILE))) {
+            out.writeObject(new LinkedList<>(waitlist));
+        } catch (IOException e) { logStealthActivity("ERR: Waitlist save failed - " + e.getMessage()); }
+    }
 
-    /**
-     * Exports library data as human-readable text file
-     * @return true if successful
-     */
-    public static boolean exportToText(List<LibraryItem> items, List<Student> students, File destination) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(destination))) {
-            // Write header
-            writer.println("MIVA SLCAS LIBRARY BACKUP - " + java.time.LocalDate.now());
-            writer.println("==================================================");
+    /** Loads waitlist queue from binary file. Returns empty queue if file doesn't exist or is corrupt. */
+    @SuppressWarnings("unchecked")
+    public static Queue<String> loadWaitlist() {
+        File f = new File(WAITLIST_FILE);
+        if (!f.exists()) return new LinkedList<>();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(f))) {
+            return new LinkedList<>((List<String>) in.readObject());
+        } catch (Exception e) { return new LinkedList<>(); }
+    }
 
-            // Write inventory section
-            writer.println("\nI. INVENTORY");
-            for (LibraryItem item : items) {
-                writer.printf("[%s] %-20s | Type: %-10s | Stock: %d/%d%n",
-                        item.getId(), item.getTitle(), item.getType(),
-                        item.getAvailableCopies(), item.getTotalCopies());
-            }
-
-            // Write student section
-            writer.println("\nII. STUDENT RECORDS");
-            for (Student s : students) {
-                writer.println(s.getName() + " (" + s.getStudentId() +
-                        ") - Borrowed Count: " + s.getCurrentLoans().size());
-            }
+    /** Exports library data to human-readable text report with summary, inventory, and student records. */
+    public static boolean exportToText(List<LibraryItem> items, List<UserAccount> students, File dest) {
+        try (PrintWriter w = new PrintWriter(new FileWriter(dest))) {
+            String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            w.println("MIVA SLCAS LIBRARY REPORT - " + ts);
+            w.println("==================================================");
+            int total = items.stream().mapToInt(LibraryItem::getTotalCopies).sum();
+            int avail = items.stream().mapToInt(LibraryItem::getAvailableCopies).sum();
+            w.printf("%nI. STOCK SUMMARY%n  Titles: %d | Total: %d | Available: %d | Borrowed: %d%n",
+                    items.size(), total, avail, total - avail);
+            items.stream().map(LibraryItem::getType).distinct().sorted().forEach(type -> {
+                List<LibraryItem> g = items.stream().filter(i -> i.getType().equals(type)).collect(Collectors.toList());
+                int gt = g.stream().mapToInt(LibraryItem::getTotalCopies).sum();
+                int ga = g.stream().mapToInt(LibraryItem::getAvailableCopies).sum();
+                w.printf("  %-12s — %d title(s), %d copies, %d available%n", type, g.size(), gt, ga);
+            });
+            w.println("\nII. INVENTORY");
+            items.forEach(i -> w.printf("[%s] %-30s | %-10s | Avail: %d/%d%n",
+                    i.getId(), i.getTitle(), i.getType(), i.getAvailableCopies(), i.getTotalCopies()));
+            w.println("\nIII. STUDENT RECORDS");
+            students.forEach(s -> w.println(s.getName() + " (" + s.getStudentId() + ") - Borrowed: " + s.getCurrentLoans().size()));
             return true;
-        } catch (IOException e) {
-            return false;
-        }
+        } catch (IOException e) { return false; }
     }
 
-    /**
-     * Exports library data as binary backup file
-     * Can be re-imported later
-     * @return true if successful
-     */
-    public static boolean exportBackup(List<LibraryItem> items, List<Student> students, File destination) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(destination))) {
-            out.writeObject(new ArrayList<>(items));
-            out.writeObject(new ArrayList<>(students));
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+    /** Exports library data to binary backup file for restoration. */
+    public static boolean exportBackup(List<LibraryItem> items, List<UserAccount> students, File dest) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(dest))) {
+            out.writeObject(new ArrayList<>(items)); out.writeObject(new ArrayList<>(students)); return true;
+        } catch (IOException e) { return false; }
     }
 
-    /**
-     * Imports library data from backup file
-     * @return Array of [items, students] or null if failed
-     */
+    /** Imports library data from binary backup file. Returns null if file doesn't exist or is corrupt. */
+    @SuppressWarnings("unchecked")
     public static Object[] importBackup(File source) {
         if (source == null || !source.exists()) return null;
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(source))) {
-            List<LibraryItem> items = (List<LibraryItem>) in.readObject();
-            List<Student> students = (List<Student>) in.readObject();
-            return new Object[]{items, students};
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    // ==================== WAITLIST PERSISTENCE ====================
-
-    /** Saves waitlist to disk */
-    public static void saveWaitlist(List<String> waitlist) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(WAITLIST_FILE))) {
-            out.writeObject(new ArrayList<>(waitlist));
-        } catch (IOException e) {
-            logStealthActivity("ERR: Waitlist save failed - " + e.getMessage());
-        }
-    }
-
-    /** Loads waitlist from disk */
-    public static List<String> loadWaitlist() {
-        File file = new File(WAITLIST_FILE);
-        if (!file.exists()) return new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            return (List<String>) in.readObject();
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-    }
-
-    // ==================== THEME PREFERENCE ====================
-
-    /** Saves user's theme preference (dark/light mode) */
-    public static void saveThemePreference(boolean isDarkMode) {
-        try (PrintWriter out = new PrintWriter(new FileWriter(CONFIG_FILE))) {
-            out.print(isDarkMode);
-        } catch (IOException e) {
-            // Fail silently - not critical
-        }
-    }
-
-    /** Loads user's theme preference */
-    public static boolean loadThemePreference() {
-        File file = new File(CONFIG_FILE);
-        if (!file.exists()) return false;  // Default to light mode
-        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-            String line = in.readLine();
-            return line != null && Boolean.parseBoolean(line);
-        } catch (Exception e) {
-            return false;
-        }
+            return new Object[]{(List<LibraryItem>) in.readObject(), (List<UserAccount>) in.readObject()};
+        } catch (Exception e) { return null; }
     }
 }

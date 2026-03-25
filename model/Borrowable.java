@@ -1,27 +1,13 @@
 package model;
 
-/**
- * Borrowable - Interface for items that can be borrowed and returned
- *
- * Defines the contract for borrowing transactions.
- * Originally designed for student-based borrowing with quantity tracking.
- *
- * Note: Current system handles borrowing through LibraryManager instead.
- * This interface is kept for potential future extensions.
- */
+/** Implemented by all borrowable item types (Book, Magazine, Journal). */
 public interface Borrowable {
-    /**
-     * Processes a borrow transaction for a student
-     *
-     * @param student The student borrowing the item
-     * @return true if successful (copies available), false otherwise
-     */
-    boolean borrowItem(Student student);
-
-    /**
-     * Processes a return transaction
-     *
-     * @param student The student returning the item
-     */
-    void returnItem(Student student);
+    /** Attempts to borrow an item. Returns false if no copies available. */
+    boolean checkout();   // returns false if no copies available
+    
+    /** Returns a borrowed item, incrementing available copies. */
+    void    checkin();
+    
+    /** Checks if at least one copy is available for borrowing. */
+    boolean isAvailable();
 }

@@ -1,58 +1,54 @@
 package gui;
 
-import utils.AuthManager;
-import utils.FileHandler;
+import controller.AuthController;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+/** Login dialog — validates staff credentials via AuthController. */
 public class LoginDialog extends JDialog {
-   // THis is for Login Dialog Box
-    private final JTextField idField;
-    private final JPasswordField passField;
-    private boolean succeeded;
-    private int loggedInUserId;
 
-    public LoginDialog(Frame parent) {
+    private final AuthController  auth;
+    private final JTextField      idField;
+    private final JPasswordField  passField;
+    private       boolean         succeeded;
+    private       int             loggedInUserId;
+
+    /**
+     * Creates login dialog with parent frame and authentication controller.
+     * Initializes UI components and sets up event handlers for login functionality.
+     * 
+     * @param parent Parent frame for the dialog.
+     * @param auth   Authentication controller for validating staff credentials.
+     */
+    public LoginDialog(Frame parent, AuthController auth) {
         super(parent, "MIVA SLCAS - Secure Login Page", true);
+        this.auth = auth;
 
-        boolean isDarkMode = FileHandler.loadThemePreference();
-        Color bg = isDarkMode ? new Color(45, 45, 48) : new Color(240, 240, 240);
-        Color fg = isDarkMode ? Color.WHITE : Color.BLACK;
-
+        // Create main panel with CardLayout for switching between views
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(bg);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill   = GridBagConstraints.HORIZONTAL;
 
-        JLabel lblId = new JLabel("Staff/Admin ID:");
-        lblId.setForeground(fg);
+        // Add ID label and text field
         gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(lblId, gbc);
-
+        panel.add(new JLabel("Staff/Admin ID:"), gbc);
         idField = new JTextField(15);
-        idField.setBackground(isDarkMode ? new Color(60, 60, 60) : Color.WHITE);
-        idField.setForeground(fg);
-        idField.setCaretColor(fg);
         gbc.gridx = 1;
         panel.add(idField, gbc);
 
-        JLabel lblPass = new JLabel("Password:");
-        lblPass.setForeground(fg);
+        // Add password label and field
         gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(lblPass, gbc);
-
+        panel.add(new JLabel("Password:"), gbc);
         passField = new JPasswordField(15);
-        passField.setBackground(isDarkMode ? new Color(60, 60, 60) : Color.WHITE);
-        passField.setForeground(fg);
-        passField.setCaretColor(fg);
         gbc.gridx = 1;
         panel.add(passField, gbc);
 
+        // Add login button with styling and event handler
         JButton btnLogin = new JButton("Login");
         btnLogin.setPreferredSize(new Dimension(100, 35));
         btnLogin.addActionListener(this::handleLogin);
@@ -60,10 +56,9 @@ public class LoginDialog extends JDialog {
         gbc.insets = new Insets(20, 10, 10, 10);
         panel.add(btnLogin, gbc);
 
-        // Initializing Enter key
+        // Add Enter key listener to submit form from any field
         KeyAdapter enterKey = new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
+            @Override public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) handleLogin(null);
             }
         };
@@ -76,37 +71,36 @@ public class LoginDialog extends JDialog {
         setLocationRelativeTo(parent);
     }
 
-    // This is Login Field
+    /** Handles login validation and authentication. Shows appropriate error messages. */
     private void handleLogin(ActionEvent e) {
-
         String idRaw = idField.getText().trim();
-        String pass = new String(passField.getPassword());
+        String pass  = new String(passField.getPassword());
 
-        // If any field is empty, a pop - up to fill both fields with appropriate characters
         if (idRaw.isEmpty() || pass.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter both ID and Password.", "Login Required", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please enter both ID and Password.",
+                    "Login Required", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         try {
-            // If ID / Passwords are valid, proceed to Main Window
             int id = Integer.parseInt(idRaw);
-            if (AuthManager.validate(id, pass)) {
+            if (auth.validate(id, pass)) {
                 loggedInUserId = id;
                 succeeded = true;
                 dispose();
             } else {
-                // If ID/Password not valid, then throw this pop-up
-                JOptionPane.showMessageDialog(this, "Access Denied: Invalid Credentials", "Security Alert", JOptionPane.ERROR_MESSAGE);
-
-
-                FileHandler.logStealthActivity("FAILED LOGIN ATTEMPT for ID: " + idRaw);
+                JOptionPane.showMessageDialog(this, "Access Denied: Invalid Credentials",
+                        "Security Alert", JOptionPane.ERROR_MESSAGE);
+                auth.logFailedAttempt(idRaw);  // file I/O delegated to AuthController
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "System ID must be a numeric value.", "Format Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "System ID must be a numeric value.",
+                    "Format Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public boolean isSucceeded() { return succeeded; }
+    /** Returns true if login was successful. */
+    public boolean isSucceeded()   { return succeeded; }
+    
+    /** Returns the user ID of the logged-in staff member. */
     public int getLoggedInUserId() { return loggedInUserId; }
 }
