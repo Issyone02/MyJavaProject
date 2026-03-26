@@ -151,6 +151,18 @@ public class StudentPanel extends JPanel {
         int    mRow = table.convertRowIndexToModel(row);
         String id   = (String) model.getValueAt(mRow, 0);
 
+        // Get the student's loan count from the model (column 2 = Borrowed count)
+        Integer loanCount = (Integer) model.getValueAt(mRow, 2);
+
+        // Check if the student has any active loans
+        if (loanCount != null && loanCount > 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Student with ID " + id + " cannot be deleted because they have an active loan in progress.\n" +
+                            "Please ensure all borrowed items are returned before deletion.",
+                    "Cannot Delete Student",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (JOptionPane.showConfirmDialog(this, "Delete this student?", "Confirm",
                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             if (confirmPassword()) {
