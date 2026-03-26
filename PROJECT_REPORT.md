@@ -30,7 +30,7 @@
 
 SLCAS is a Java SE desktop application that automates university library operations: catalogue management, borrowed items due dates tracking, reservation queuing, staff administration, and report generation. The interface is styled with FlatLaf for a modern, consistent appearance across platforms.
 
-Three user roles shape how the system is accessed. **Admins** have full control: they manage the catalogue, register students, administer staff accounts, and access the audit log and reports. Sensitive actions require password re-confirmation. **Librarians** handle daily desk work: processing borrows and returns, managing the waitlist, and searching the catalogue. They cannot modify catalogue structure, manage staff, or view logs. **Students** do not log in; they are account holders whose loans, overdue history, and waitlist reservations are tracked by staff.
+Three user roles shape how the system is accessed. **Admins** have full control: they manage the catalogue, register students, administer staff accounts, and access the audit log and reports. Sensitive actions require password re-confirmation. Admins can promote a Librarian to Admin level or demote an Admin to Librarian; for security reasons, the Super Admin account cannot be deleted or demoted. **Librarians** handle daily desk work: processing borrows and returns, managing the waitlist, searching the catalogue, and registering new students into the system. They cannot edit or delete student records, modify catalogue structure, manage staff, or view logs. **Students** do not log in; they are account holders whose loans, overdue history, and waitlist reservations are tracked by staff.
 
 The codebase follows a strict **MVC** structure across five packages. The `model` package owns all data (`LibraryItem` abstract base, `Book`/`Magazine`/`Journal` subtypes, `UserAccount`, `BorrowRecord`, `LibraryDatabase`). The `controller` package holds all business logic (`LibraryManager` as central coordinator, `BorrowController`, `SearchEngine`, `SortEngine`). The `gui` package holds ten screens with zero logic, each communicating only through the `LibraryController` interface. Utilities live in `utils` and the entry point is in `main`.
 
@@ -42,9 +42,9 @@ The codebase follows a strict **MVC** structure across five packages. The `model
 
 **Borrow, Return and Waitlist:** Borrows check item existence, student existence, and availability. When an item is returned, the system notifies the librarian if there is a student on the waitlist for that item and prompts them to fulfil the reservation. The waitlist is first-in first-out but supports manual reordering, fulfilment, and removal.
 
-**Student Management:** Admins register and manage student accounts. Each student record stores contact details, a list of active loans, and a full borrow history that persists after items are returned.
+**Student Management:** Admins and Librarians can register new student accounts. Only Admins can edit or delete student records. Each student record stores contact details, a list of active loans, and a full borrow history that persists after items are returned.
 
-**Staff Management:** Admins create and deactivate librarian accounts. Deactivation bars login while preserving the staff member's full audit trail, so historical records remain intact.
+**Staff Management:** Admins create and deactivate librarian accounts, and can promote a Librarian to Admin level or demote an Admin to Librarian. Deactivation bars login while preserving the staff member's full audit trail, so historical records remain intact. The Super Admin account cannot be deleted or demoted, ensuring there is always a root-level administrator in the system.
 
 **Search and Sort:** Searches auto-detect whether the catalogue is sorted and select Binary or Linear Search accordingly. Three sorts are available via dropdown (Merge, Insertion, Quick Sort), with the field chosen by clicking any column header. A global search bar at the top searches all tabs in real time.
 
@@ -56,7 +56,7 @@ The codebase follows a strict **MVC** structure across five packages. The `model
 
 **Security and Persistence:** Passwords are stored as SHA-256 hashes. Role-based access restricts what each staff type can see and do. All data is serialised to binary files automatically before every change.
 
-**Other Features:** keyboard shortcuts; binary backup export and restore; text report export; manual waitlist reordering; duplicate loan prevention; duplicate student ID prevention; admin password reset for staff; deletion blocked while copies are on loan; borrowed count preserved on quantity edit; auto-calculated due dates; multiple export formats; student full borrow history; session login and logout tracking; failed login attempt logging; auto-save before every change; and first-run demo data seeding.
+**Other Features:** keyboard shortcuts; binary backup export and restore; duplicate loan prevention; duplicate student ID prevention; admin password reset for staff; deletion blocked while copies are on loan; auto-calculated due dates; session login and logout tracking; failed login attempt logging; and first-run demo data seeding.
 
 ---
 
